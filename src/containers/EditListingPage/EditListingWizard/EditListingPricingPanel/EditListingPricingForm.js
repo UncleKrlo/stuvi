@@ -13,7 +13,13 @@ import { formatMoney } from '../../../../util/currency';
 import { types as sdkTypes } from '../../../../util/sdkLoader';
 
 // Import shared components
-import { Button, Form, FieldCurrencyInput, FieldTextInput } from '../../../../components';
+import {
+  Button,
+  Form,
+  FieldCurrencyInput,
+  FieldTextInput,
+  FieldCheckbox,
+} from '../../../../components';
 
 // Import modules from this directory
 import css from './EditListingPricingForm.module.css';
@@ -60,6 +66,7 @@ export const EditListingPricingFormComponent = props => (
         updated,
         updateInProgress,
         fetchErrors,
+        listing,
       } = formRenderProps;
 
       const priceValidators = getPriceValidators(
@@ -73,7 +80,8 @@ export const EditListingPricingFormComponent = props => (
       const submitInProgress = updateInProgress;
       const submitDisabled = invalid || disabled || submitInProgress;
       const { updateListingError, showListingsError } = fetchErrors || {};
-
+      const optionalServicesType =
+        listing.attributes.publicData?.listingType == 'hourly-studio-listing-opt-assist';
       return (
         <Form onSubmit={handleSubmit} className={classes}>
           {updateListingError ? (
@@ -99,6 +107,70 @@ export const EditListingPricingFormComponent = props => (
             currencyConfig={appSettings.getCurrencyFormatting(marketplaceCurrency)}
             validate={priceValidators}
           />
+          {/* <FieldCheckbox
+            id="soundEngineer"
+            name="soundEngineer"
+            label="Sound engineer"
+          /> */}
+          {optionalServicesType && (
+            <>
+              Optional Services
+              <label>
+                <i>Only add prices below if you offer any of these services optionally</i>
+              </label>
+              <FieldCurrencyInput
+                className={css.service}
+                id={`${formId}soundEngineerFee`}
+                name="soundEngineerFee"
+                autoFocus={autoFocus}
+                label="Sound Engineer price per hour"
+                placeholder="Add a price for sound engineering services..."
+                currencyConfig={appSettings.getCurrencyFormatting(marketplaceCurrency)}
+              />
+              {/* <FieldCheckbox
+            id="mixingEngineer"
+            name="mixingEngineer"
+            label="Mixing engineer"
+          /> */}
+              <FieldCurrencyInput
+                className={css.service}
+                id={`${formId}mixingEngineerFee`}
+                name="mixingEngineerFee"
+                autoFocus={autoFocus}
+                label="Mixing Engineer price per hour"
+                placeholder="Add a price for mixing services..."
+                currencyConfig={appSettings.getCurrencyFormatting(marketplaceCurrency)}
+              />
+              {/* <FieldCheckbox
+            id="composer"
+            name="composer"
+            label="Composer"
+          /> */}
+              <FieldCurrencyInput
+                className={css.service}
+                id={`${formId}composerFee`}
+                name="composerFee"
+                autoFocus={autoFocus}
+                label="Composer price per hour"
+                placeholder="Add a price for composing services..."
+                currencyConfig={appSettings.getCurrencyFormatting(marketplaceCurrency)}
+              />
+              {/* <FieldCheckbox
+            id="producer"
+            name="producer"
+            label="Producer"
+          /> */}
+              <FieldCurrencyInput
+                className={css.service}
+                id={`${formId}producerFee`}
+                name="producerFee"
+                autoFocus={autoFocus}
+                label="Producer price per hour"
+                placeholder="Add a price for production services..."
+                currencyConfig={appSettings.getCurrencyFormatting(marketplaceCurrency)}
+              />
+            </>
+          )}
 
           <Button
             className={css.submitButton}

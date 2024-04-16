@@ -18,8 +18,8 @@
 
   /* Colors used for different functions (like error texts) */
 
-  --colorSuccess: #2ecc71;
-  --colorSuccessDark: #239954;
+  --colorSuccess: #367d4d;
+  --colorSuccessDark: #2A623D;
   --colorSuccessLight: #f0fff6;
   --colorFail: #ff0000;
   --colorFailLight: #fff0f0;
@@ -71,7 +71,7 @@
   --colorSecondaryButtonLight: var(--colorWhite);
 
   /* ================ Font ================ */
-  --fontFamily: -apple-system, BlinkMacSystemFont, 'Inter', Helvetica, Arial, sans-serif,
+  --fontFamily: 'Printvetica', 'PPNeueMontreal', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
   --fontWeightRegular: 400;
@@ -247,6 +247,7 @@ a:hover {
 
 h1 {
   font-size: 24px;
+  font-synthesis: none;
   line-height: 24px;
   font-weight: var(--fontWeightBlack);
   padding: 3px 0 3px 0;
@@ -266,6 +267,7 @@ h1 {
 
 h2 {
   font-size: 21px;
+  font-synthesis: none;
   line-height: 24px;
   font-weight: var(--fontWeightBold);
 
@@ -286,6 +288,7 @@ h2 {
 
 h3 {
   font-weight: var(--fontWeightBold);
+  font-synthesis: none;
   font-size: 18px;
   line-height: 24px;
   /* x * 6px */
@@ -304,6 +307,7 @@ h3 {
 
 h4 {
   font-weight: var(--fontWeightBold);
+  font-synthesis: none;
   font-size: 21px;
   line-height: 30px;
   padding: 1px 0 5px 0;
@@ -322,6 +326,7 @@ h4 {
 
 h5 {
   font-weight: var(--fontWeightMedium);
+  font-synthesis: none;
   font-size: 14px;
   line-height: 18px;
   /* x * 6px */
@@ -340,6 +345,7 @@ h5 {
 
 h6 {
   font-weight: var(--fontWeightBold);
+  font-synthesis: none;
   font-size: 12px;
   line-height: 18px;
   text-transform: uppercase;
@@ -363,6 +369,7 @@ p,
 pre {
   font-family: var(--fontFamily);
   font-weight: var(--fontWeightMedium);
+  font-synthesis: none;
 
   /* No margins for default font */
   font-size: 14px;
@@ -425,6 +432,7 @@ legend {
 
 label {
   font-weight: var(--fontWeightSemiBold);
+  font-synthesis: none;
   font-size: 13px;
   line-height: 18px;
   display: block;
@@ -444,6 +452,8 @@ label {
 button {
   font-family: var(--fontFamily);
   font-weight: var(--fontWeightSemiBold);
+  font-synthesis: none;
+
 }
 
 /* marketplaceInputFontStyles */
@@ -451,6 +461,7 @@ select,
 input,
 textarea {
   font-family: var(--fontFamily);
+  font-synthesis: none;
   font-size: 16px;
 }
 
@@ -745,7 +756,7 @@ textarea {
 .marketplaceBodyFontStyles,
 .marketplaceDefaultFontStyles {
   font-family: var(--fontFamily);
-  font-weight: var(--fontWeightMedium);
+  font-weight: var(--fontWeightRegular);
 
   /* No margins for default font */
   font-size: 14px;

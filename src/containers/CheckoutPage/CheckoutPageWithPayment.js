@@ -80,12 +80,19 @@ const getOrderParams = (pageData, shippingDetails, optionalPaymentParams, config
       ...shippingDetails,
     },
   };
-
+  const hasSoundEngineerFee = pageData.orderData?.soundEngineerFee?.length > 0;
+  const hasMixingEngineerFee = pageData.orderData?.mixingEngineerFee?.length > 0; 
+  const hasComposerFee = pageData.orderData?.composerFee?.length > 0;
+  const hasProducerFee = pageData.orderData?.producerFee?.length > 0; 
   // These are the order parameters for the first payment-related transition
   // which is either initiate-transition or initiate-transition-after-enquiry
   const orderParams = {
     listingId: pageData?.listing?.id,
     ...deliveryMethodMaybe,
+    hasSoundEngineerFee,
+    hasMixingEngineerFee,
+    hasComposerFee, 
+    hasProducerFee,
     ...quantityMaybe,
     ...bookingDatesMaybe(pageData.orderData?.bookingDates),
     ...protectedDataMaybe,

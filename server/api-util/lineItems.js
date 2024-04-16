@@ -15,6 +15,27 @@ const { Money } = types;
  * @param {*} publicData should contain shipping prices
  * @param {*} currency should point to the currency of listing's price.
  */
+
+ const resolveSoundEngineerFee = listing => {
+  const soundEngineerFee = listing.attributes.publicData.soundEngineerFee || {};
+  const { amount, currency } = soundEngineerFee || {};
+  return amount && currency ? new Money(amount, currency) : null;
+};
+const resolveMixingEngineerFee = listing => {
+  const mixingEngineerFee = listing.attributes.publicData.mixingEngineerFee || {};
+  const { amount, currency } = mixingEngineerFee || {};
+  return amount && currency ? new Money(amount, currency) : null;
+};
+const resolveComposerFee = listing => {
+  const composerFee = listing.attributes.publicData.composerFee || {};
+  const { amount, currency } = composerFee || {};
+  return amount && currency ? new Money(amount, currency) : null;
+};
+const resolveProducerFee = listing => {
+  const producerFee  = listing.attributes.publicData.producerFee || {};
+  const { amount, currency } = producerFee || {};
+  return amount && currency ? new Money(amount, currency) : null;
+};
 const getItemQuantityAndLineItems = (orderData, publicData, currency) => {
   // Check delivery method and shipping prices
   const quantity = orderData ? orderData.stockReservationQuantity : null;
@@ -33,6 +54,7 @@ const getItemQuantityAndLineItems = (orderData, publicData, currency) => {
         quantity
       )
     : null;
+    
 
   // Add line-item for given delivery method.
   // Note: by default, pickup considered as free.
@@ -114,7 +136,7 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
  * @param {Object} customerCommission
  * @returns {Array} lineItems
  */
-exports.transactionLineItems = (listing, orderData, providerCommission, customerCommission) => {
+  exports.transactionLineItems = (listing, orderData, providerCommission, customerCommission) => {
   const publicData = listing.attributes.publicData;
   const unitPrice = listing.attributes.price;
   const currency = unitPrice.currency;
@@ -148,6 +170,50 @@ exports.transactionLineItems = (listing, orderData, providerCommission, customer
 
   const { quantity, extraLineItems } = quantityAndExtraLineItems;
 
+  const soundEngineerFeePrice = orderData.hasSoundEngineerFee ? resolveSoundEngineerFee(listing) : null;
+  const soundEngineerFee = soundEngineerFeePrice
+    ? [
+        {
+          code: 'line-item/sound-engineer',
+          unitPrice: soundEngineerFeePrice,
+          quantity: quantity,
+          includeFor: ['customer', 'provider'],
+        },
+      ]
+    : [];
+    const mixingEngineerFeePrice = orderData.hasMixingEngineerFee ? resolveMixingEngineerFee(listing) : null;
+    const mixingEngineerFee = mixingEngineerFeePrice
+      ? [
+          {
+            code: 'line-item/mixing-engineer',
+            unitPrice: mixingEngineerFeePrice,
+            quantity: quantity,
+            includeFor: ['customer', 'provider'],
+          },
+        ]
+      : [];
+    const composerFeePrice = orderData.hasComposerFee ? resolveComposerFee(listing) : null;
+    const composerFee = composerFeePrice
+      ? [
+          {
+            code: 'line-item/composer',
+            unitPrice: composerFeePrice,
+            quantity: quantity,
+            includeFor: ['customer', 'provider'],
+          },
+        ]
+      : [];
+      const producerFeePrice = orderData.hasProducerFee ? resolveProducerFee(listing) : null;
+      const producerFee = producerFeePrice
+        ? [
+            {
+              code: 'line-item/producer',
+              unitPrice: producerFeePrice,
+              quantity: quantity,
+              includeFor: ['customer', 'provider'],
+            },
+          ]
+        : [];
   // Throw error if there is no quantity information given
   if (!quantity) {
     const message = `Error: transition should contain quantity information: 
@@ -158,7 +224,6 @@ exports.transactionLineItems = (listing, orderData, providerCommission, customer
     error.data = {};
     throw error;
   }
-
   /**
    * If you want to use pre-defined component and translations for printing the lineItems base price for order,
    * you should use one of the codes:
@@ -192,7 +257,7 @@ exports.transactionLineItems = (listing, orderData, providerCommission, customer
     ? [
         {
           code: 'line-item/provider-commission',
-          unitPrice: calculateTotalFromLineItems([order]),
+          unitPrice: calculateTotalFromLineItems([order, ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee]),
           percentage: getNegation(providerCommission.percentage),
           includeFor: ['provider'],
         },
@@ -206,7 +271,7 @@ exports.transactionLineItems = (listing, orderData, providerCommission, customer
     ? [
         {
           code: 'line-item/customer-commission',
-          unitPrice: calculateTotalFromLineItems([order]),
+          unitPrice: calculateTotalFromLineItems([order, ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee]),
           percentage: customerCommission.percentage,
           includeFor: ['customer'],
         },
@@ -218,6 +283,7 @@ exports.transactionLineItems = (listing, orderData, providerCommission, customer
   const lineItems = [
     order,
     ...extraLineItems,
+    ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee,
     ...providerCommissionMaybe,
     ...customerCommissionMaybe,
   ];
