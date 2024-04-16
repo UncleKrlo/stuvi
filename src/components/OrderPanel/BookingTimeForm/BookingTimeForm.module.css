@@ -4,6 +4,12 @@
   display: flex;
   flex-direction: column;
 }
+.feeContainer{
+  margin-top: 25px;
+}
+.feeDiv{
+  margin-bottom: 15px;
+}
 
 .bookingBreakdownTitle {
   letter-spacing: 1px;

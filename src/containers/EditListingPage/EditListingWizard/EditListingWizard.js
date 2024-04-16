@@ -235,7 +235,7 @@ const tabCompleted = (tab, listing, config) => {
         hasValidListingFieldsInExtendedData(publicData, privateData, config)
       );
     case PRICING:
-      return !!price;
+      return listingType && !!price;
     case PRICING_AND_STOCK:
       return !!price;
     case DELIVERY:

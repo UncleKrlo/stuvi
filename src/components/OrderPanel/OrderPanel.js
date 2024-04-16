@@ -47,6 +47,7 @@ import {
 import { ModalInMobile, PrimaryButton, AvatarSmall, H1, H2 } from '../../components';
 
 import css from './OrderPanel.module.css';
+import { InlineTextButton } from '../../components';
 
 const BookingTimeForm = loadable(() =>
   import(/* webpackChunkName: "BookingTimeForm" */ './BookingTimeForm/BookingTimeForm')
@@ -256,6 +257,10 @@ const OrderPanel = props => {
 
   const classes = classNames(rootClassName || css.root, className);
   const titleClasses = classNames(titleClassName || css.orderTitle);
+  const soundEngineerFee = listing?.attributes?.publicData.soundEngineerFee;
+  const mixingEngineerFee = listing?.attributes?.publicData.mixingEngineerFee;
+  const composerFee = listing?.attributes?.publicData.composerFee;
+  const producerFee = listing?.attributes?.publicData.producerFee;
 
   return (
     <div className={classes}>
@@ -293,6 +298,8 @@ const OrderPanel = props => {
           <span className={css.providerNamePlain}>
             <FormattedMessage id="OrderPanel.author" values={{ name: authorDisplayName }} />
           </span>
+          <span className={css.linkSeparator}>&nbsp;•&nbsp;</span> 
+          <span><InlineTextButton onClick={onContactUser}>Chat</InlineTextButton></span>
         </div>
 
         {showPriceMissing ? (
@@ -321,6 +328,10 @@ const OrderPanel = props => {
             fetchLineItemsInProgress={fetchLineItemsInProgress}
             fetchLineItemsError={fetchLineItemsError}
             payoutDetailsWarning={payoutDetailsWarning}
+            soundEngineerFee={soundEngineerFee}
+            mixingEngineerFee={mixingEngineerFee}
+            composerFee={composerFee}
+            producerFee={producerFee}
           />
         ) : showBookingDatesForm ? (
           <BookingDatesForm
@@ -342,6 +353,10 @@ const OrderPanel = props => {
             fetchLineItemsInProgress={fetchLineItemsInProgress}
             fetchLineItemsError={fetchLineItemsError}
             payoutDetailsWarning={payoutDetailsWarning}
+            soundEngineerFee={soundEngineerFee}
+            mixingEngineerFee={mixingEngineerFee}
+            composerFee={composerFee}
+            producerFee={producerFee}
           />
         ) : showProductOrderForm ? (
           <ProductOrderForm
