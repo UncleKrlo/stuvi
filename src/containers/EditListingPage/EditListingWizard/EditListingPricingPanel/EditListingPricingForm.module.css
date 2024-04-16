@@ -13,7 +13,9 @@
     padding-top: 2px;
   }
 }
-
+.service{
+  margin-top: 20px;
+}
 .error {
   color: var(--colorFail);
 }

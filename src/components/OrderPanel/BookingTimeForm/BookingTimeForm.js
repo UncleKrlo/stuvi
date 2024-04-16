@@ -9,12 +9,14 @@ import { timestampToDate } from '../../../util/dates';
 import { propTypes } from '../../../util/types';
 import { BOOKING_PROCESS_NAME } from '../../../transactions/transaction';
 
-import { Form, H6, PrimaryButton } from '../../../components';
-
+import { Form, H6, PrimaryButton, FieldCheckbox } from '../../../components';
+import { formatMoney } from '../../../util/currency';
+import { types as sdkTypes } from '../../../util/sdkLoader';
 import EstimatedCustomerBreakdownMaybe from '../EstimatedCustomerBreakdownMaybe';
 import FieldDateAndTimeInput from './FieldDateAndTimeInput';
 
 import css from './BookingTimeForm.module.css';
+const { Money } = sdkTypes;
 
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
@@ -44,6 +46,10 @@ export class BookingTimeFormComponent extends Component {
     // which is the default case when the value has been selected through the form
     const isStartBeforeEnd = bookingStartTime < bookingEndTime;
 
+    const hasSoundEngineerFee = formValues.values?.soundEngineerFee?.length > 0;
+    const hasMixingEngineerFee = formValues.values?.mixingEngineerFee?.length > 0;
+    const hasComposerFee = formValues.values?.composerFee?.length > 0;
+    const hasProducerFee = formValues.values?.producerFee?.length > 0;
     if (
       bookingStartTime &&
       bookingEndTime &&
@@ -51,7 +57,14 @@ export class BookingTimeFormComponent extends Component {
       !this.props.fetchLineItemsInProgress
     ) {
       this.props.onFetchTransactionLineItems({
-        orderData: { bookingStart: startDate, bookingEnd: endDate },
+        orderData: {
+          bookingStart: startDate,
+          bookingEnd: endDate,
+          hasSoundEngineerFee,
+          hasMixingEngineerFee,
+          hasComposerFee,
+          hasProducerFee,
+        },
         listingId,
         isOwnListing,
       });
@@ -78,6 +91,7 @@ export class BookingTimeFormComponent extends Component {
           const {
             endDatePlaceholder,
             startDatePlaceholder,
+            formId,
             form,
             pristine,
             handleSubmit,
@@ -92,6 +106,10 @@ export class BookingTimeFormComponent extends Component {
             fetchLineItemsInProgress,
             fetchLineItemsError,
             payoutDetailsWarning,
+            soundEngineerFee,
+            mixingEngineerFee,
+            composerFee,
+            producerFee,
           } = fieldRenderProps;
 
           const startTime = values && values.bookingStartTime ? values.bookingStartTime : null;
@@ -113,6 +131,76 @@ export class BookingTimeFormComponent extends Component {
           const showEstimatedBreakdown =
             breakdownData && lineItems && !fetchLineItemsInProgress && !fetchLineItemsError;
 
+          const soundEngineerLabel = soundEngineerFee
+            ? intl.formatMessage(
+                { id: 'BookingDatesForm.soundEngineerLabel' },
+                {
+                  fee: formatMoney(
+                    intl,
+                    new Money(soundEngineerFee.amount, soundEngineerFee.currency)
+                  ),
+                }
+              )
+            : null;
+
+          const soundEngineerMaybe = soundEngineerFee ? (
+            <FieldCheckbox
+              id={`${formId}.soundEngineerFee`}
+              name="soundEngineerFee"
+              label={soundEngineerLabel}
+              value="soundEngineerFee"
+            />
+          ) : null;
+          const mixingEngineerLabel = mixingEngineerFee
+            ? intl.formatMessage(
+                { id: 'BookingDatesForm.mixingEngineerLabel' },
+                {
+                  fee: formatMoney(
+                    intl,
+                    new Money(mixingEngineerFee.amount, mixingEngineerFee.currency)
+                  ),
+                }
+              )
+            : null;
+
+          const mixingEngineerMaybe = mixingEngineerFee ? (
+            <FieldCheckbox
+              id={`${formId}.mixingEngineerFee`}
+              name="mixingEngineerFee"
+              label={mixingEngineerLabel}
+              value="mixingEngineerFee"
+            />
+          ) : null;
+          const composerLabel = composerFee
+            ? intl.formatMessage(
+                { id: 'BookingDatesForm.composerLabel' },
+                { fee: formatMoney(intl, new Money(composerFee.amount, composerFee.currency)) }
+              )
+            : null;
+
+          const composerMaybe = composerFee ? (
+            <FieldCheckbox
+              id={`${formId}.composerFee`}
+              name="composerFee"
+              label={composerLabel}
+              value="composerFee"
+            />
+          ) : null;
+          const producerLabel = producerFee
+            ? intl.formatMessage(
+                { id: 'BookingDatesForm.producerLabel' },
+                { fee: formatMoney(intl, new Money(producerFee.amount, producerFee.currency)) }
+              )
+            : null;
+
+          const producerMaybe = producerFee ? (
+            <FieldCheckbox
+              id={`${formId}.producerFee`}
+              name="producerFee"
+              label={producerLabel}
+              value="producerFee"
+            />
+          ) : null;
           return (
             <Form onSubmit={handleSubmit} className={classes} enforcePagePreloadFor="CheckoutPage">
               <FormSpy
@@ -143,7 +231,13 @@ export class BookingTimeFormComponent extends Component {
                   dayCountAvailableForBooking={dayCountAvailableForBooking}
                 />
               ) : null}
-
+              <div className={css.feeContainer}>
+                <div className={css.feeDiv}>{soundEngineerMaybe}</div>
+                <div className={css.feeDiv}>{mixingEngineerMaybe}</div>
+                <div className={css.feeDiv}>{composerMaybe}</div>
+                <div className={css.feeDiv}>{producerMaybe}</div>
+              </div>
+              
               {showEstimatedBreakdown ? (
                 <div className={css.priceBreakdownContainer}>
                   <H6 as="h3" className={css.bookingBreakdownTitle}>

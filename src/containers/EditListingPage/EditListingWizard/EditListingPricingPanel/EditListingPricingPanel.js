@@ -18,9 +18,26 @@ const { Money } = sdkTypes;
 
 const getInitialValues = params => {
   const { listing } = params;
-  const { price } = listing?.attributes || {};
+  const { price, publicData } = listing?.attributes || {};
 
-  return { price };
+  const soundEngineerFee = publicData?.soundEngineerFee || null;
+  const mixingEngineerFee = publicData?.mixingEngineerFee || null;
+  const composerFee = publicData?.composerFee || null;
+  const producerFee = publicData?.producerFee || null;
+
+
+  const soundEngineerFeeAsMoney = soundEngineerFee ? new Money(soundEngineerFee.amount, soundEngineerFee.currency) : null;
+  const mixingEngineerFeeAsMoney = mixingEngineerFee ? new Money(mixingEngineerFee.amount, mixingEngineerFee.currency) : null;
+  const composerFeeAsMoney = composerFee ? new Money(composerFee.amount, composerFee.currency) : null;
+  const producerFeeAsMoney = producerFee ? new Money(producerFee.amount, producerFee.currency) : null;
+
+  return { 
+    price,
+    soundEngineerFee: soundEngineerFeeAsMoney,
+    mixingEngineerFee: mixingEngineerFeeAsMoney,
+    composerFee: composerFeeAsMoney,
+    producerFee: producerFeeAsMoney
+  };
 };
 
 const EditListingPricingPanel = props => {
@@ -68,13 +85,18 @@ const EditListingPricingPanel = props => {
           className={css.form}
           initialValues={initialValues}
           onSubmit={values => {
-            const { price } = values;
-
-            // New values for listing attributes
-            const updateValues = {
+            const { price, soundEngineerFee = null, mixingEngineerFee= null, composerFee= null, producerFee= null } = values;
+                    
+            const updatedValues = {
               price,
+              publicData: {
+                soundEngineerFee: soundEngineerFee ? { amount: soundEngineerFee.amount, currency: soundEngineerFee.currency } : null,
+                mixingEngineerFee: mixingEngineerFee ? { amount: mixingEngineerFee.amount, currency: mixingEngineerFee.currency } : null,  
+                composerFee: composerFee ? { amount: composerFee.amount, currency: composerFee.currency } : null,
+                producerFee: producerFee ? { amount: producerFee.amount, currency: producerFee.currency } : null,
+              },
             };
-            onSubmit(updateValues);
+            onSubmit(updatedValues);
           }}
           marketplaceCurrency={marketplaceCurrency}
           unitType={unitType}
@@ -85,6 +107,7 @@ const EditListingPricingPanel = props => {
           updated={panelUpdated}
           updateInProgress={updateInProgress}
           fetchErrors={errors}
+          listing={listing}
         />
       ) : (
         <div className={css.priceCurrencyInvalid}>
