@@ -185,9 +185,9 @@ const UpdateStripeAccountFields = props => {
       {/* <div className={css.savedCountry}>
         <FormattedMessage id={`StripeConnectAccountForm.countryNames.${savedCountry}`} />
       </div> */}
-      <label className={css.accountInformationTitle}>
+      {/* <label className={css.accountInformationTitle}>
         <FormattedMessage id="StripeConnectAccountForm.bankAccountLabel" />
-      </label>
+      </label> */}
 
       {showCardUpdateInput && savedCountry ? (
         <div></div>
@@ -201,7 +201,7 @@ const UpdateStripeAccountFields = props => {
         //   validate={validators.required(' ')}
         // />
       ) : !submitInProgress ? (
-        <p>We use Stripe to safely process payments. Continue with Stripe below.</p>
+        <p>We use Stripe to safely process payments.</p>
         // <InlineTextButton
         //   className={css.savedBankAccount}
         //   disabled
