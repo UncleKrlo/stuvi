@@ -162,7 +162,7 @@ export const createStripeAccount = params => (dispatch, getState, sdk) => {
   const {
     country,
     accountType,
-    bankAccountToken,
+    // bankAccountToken,
     businessProfileMCC,
     businessProfileURL,
     stripePublishableKey,
@@ -191,7 +191,7 @@ export const createStripeAccount = params => (dispatch, getState, sdk) => {
         {
           country,
           accountToken,
-          bankAccountToken,
+          // bankAccountToken,
           requestedCapabilities,
           businessProfileMCC,
           businessProfileURL,
