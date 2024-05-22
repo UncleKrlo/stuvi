@@ -73,7 +73,7 @@ const PropertyGroup = props => {
 
   return (
     <ul className={listClasses}>
-      {checked.map(option => (
+       {checked.map(option => (
         <Item key={`${id}.${option.key}`} label={option.label} isSelected={option.isSelected} />
       ))}
     </ul>
