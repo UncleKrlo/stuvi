@@ -152,7 +152,7 @@ const CreateStripeAccountFields = props => {
         ))}
       </FieldSelect>
 
-      {country ? (
+      {/* {country ? (
         <StripeBankAccountTokenInputField
           className={css.bankDetailsStripeField}
           disabled={disabled}
@@ -162,7 +162,7 @@ const CreateStripeAccountFields = props => {
           currency={countryCurrency(country, supportedCountries)}
           validate={validators.required(' ')}
         />
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
@@ -190,19 +190,21 @@ const UpdateStripeAccountFields = props => {
       </label>
 
       {showCardUpdateInput && savedCountry ? (
-        <StripeBankAccountTokenInputField
-          className={css.bankDetailsStripeField}
-          disabled={disabled}
-          name="bankAccountToken"
-          formName="StripeConnectAccountForm"
-          country={savedCountry}
-          currency={countryCurrency(savedCountry, supportedCountries)}
-          validate={validators.required(' ')}
-        />
+        <div></div>
+        // <StripeBankAccountTokenInputField
+        //   className={css.bankDetailsStripeField}
+        //   disabled={disabled}
+        //   name="bankAccountToken"
+        //   formName="StripeConnectAccountForm"
+        //   country={savedCountry}
+        //   currency={countryCurrency(savedCountry, supportedCountries)}
+        //   validate={validators.required(' ')}
+        // />
       ) : !submitInProgress ? (
         <InlineTextButton
           className={css.savedBankAccount}
-          onClick={() => setShowCardUpdateInput(true)}
+          disabled
+          //onClick={() => setShowCardUpdateInput(true)}
         >
           •••••••••••••••••••••••• {stripeBankAccountLastDigits}
         </InlineTextButton>
