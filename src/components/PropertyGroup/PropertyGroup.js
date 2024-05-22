@@ -39,14 +39,17 @@ const IconCheck = props => {
 const Item = props => {
   const { label, isSelected } = props;
   const labelClass = isSelected ? css.selectedLabel : css.notSelectedLabel;
+
   return (
     <li className={css.item}>
       <span className={css.iconWrapper}>
         <IconCheck isVisible={isSelected} />
       </span>
-      <div className={css.labelWrapper}>
-        <span className={labelClass}>{label}</span>
-      </div>
+      {isSelected && (
+        <div className={css.labelWrapper}>
+          <span className={labelClass}>{label}</span>
+        </div>
+      )}
     </li>
   );
 };
@@ -55,14 +58,16 @@ const PropertyGroup = props => {
   const { rootClassName, className, id, options, selectedOptions, twoColumns } = props;
   const classes = classNames(rootClassName || css.root, className);
   const listClasses = twoColumns ? classNames(classes, css.twoColumns) : classes;
-
   const checked = checkSelected(options, selectedOptions);
 
   return (
     <ul className={listClasses}>
-      {checked.map(option => (
-        <Item key={`${id}.${option.key}`} label={option.label} isSelected={option.isSelected} />
-      ))}
+      {checked
+        .filter(option => option.isSelected) // Filter only by selected options
+        .map(option => (
+          <Item key={`${id}.${option.key}`} label={option.label} isSelected={option.isSelected} />
+        ))
+      }
     </ul>
   );
 };

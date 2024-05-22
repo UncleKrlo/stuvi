@@ -43,19 +43,17 @@
   display: inline-block;
 }
 
-.selectedLabel,
-.notSelectedLabel {
+.selectedLabel {
   composes: marketplaceBodyFontStyles from global;
   line-height: 24px;
   margin: 0;
 }
 
 .selectedLabel {
-  font-weight: var(--fontWeightSemiBold);
+  font-weight: var(--fontWeightRegular);
 }
 
 .notSelectedLabel {
-  color: var(--colorGrey300);
-  position: relative;
-  text-decoration: line-through;
+  line-height: 0px;
+  display: none;
 }
