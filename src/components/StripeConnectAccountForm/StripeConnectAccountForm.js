@@ -181,10 +181,10 @@ const UpdateStripeAccountFields = props => {
 
   return (
     <div className={css.savedInformation}>
-      <label className={css.accountInformationTitle}>{countryLabel}</label>
-      <div className={css.savedCountry}>
+      {/* <label className={css.accountInformationTitle}>{countryLabel}</label> */}
+      {/* <div className={css.savedCountry}>
         <FormattedMessage id={`StripeConnectAccountForm.countryNames.${savedCountry}`} />
-      </div>
+      </div> */}
       <label className={css.accountInformationTitle}>
         <FormattedMessage id="StripeConnectAccountForm.bankAccountLabel" />
       </label>
@@ -201,13 +201,14 @@ const UpdateStripeAccountFields = props => {
         //   validate={validators.required(' ')}
         // />
       ) : !submitInProgress ? (
-        <InlineTextButton
-          className={css.savedBankAccount}
-          disabled
-          //onClick={() => setShowCardUpdateInput(true)}
-        >
-          •••••••••••••••••••••••• {stripeBankAccountLastDigits}
-        </InlineTextButton>
+        <p>We use Stripe to safely process payments. Continue with Stripe below.</p>
+        // <InlineTextButton
+        //   className={css.savedBankAccount}
+        //   disabled
+        //   //onClick={() => setShowCardUpdateInput(true)}
+        // >
+        //   •••••••••••••••••••••••• {stripeBankAccountLastDigits}
+        // </InlineTextButton>
       ) : null}
     </div>
   );
