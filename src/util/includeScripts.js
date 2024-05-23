@@ -129,6 +129,16 @@ export const IncludeScripts = props => {
     if (isMapboxInUse && !window.mapboxgl.accessToken) {
       // Add access token for Mapbox sdk.
       window.mapboxgl.accessToken = mapboxAccessToken;
+    } else if (isGoogleMapsInUse) {
+      const map = new google.maps.Map(document.getElementById('map'), {
+
+      });
+
+      const maBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(40.70005335, -73.4445769),
+        new google.maps.LatLng(43.56312369, -70.32995287)
+      );
+      map.fitBounds(maBounds);
     }
   };
 
