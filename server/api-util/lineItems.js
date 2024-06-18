@@ -267,12 +267,12 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
   // The customer commission is what the customer pays for the transaction, and
   // it is added on top of the order price to get the customer's payin price:
   // orderPrice + customerCommission = customerPayin
-  const customerCommissionMaybe = hasCommissionPercentage(customerCommission)
+  const customerCommissionMaybe = (customerCommission)
     ? [
         {
           code: 'line-item/customer-commission',
-          unitPrice: calculateTotalFromLineItems([order, ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee]),
-          percentage: customerCommission.percentage,
+          unitPrice: new Money(295, currency),
+          quantity: 1,
           includeFor: ['customer'],
         },
       ]

@@ -76,22 +76,15 @@
    :from :state/preauthorized,
    :to :state/declined}
   {:name :transition/expire,
-   :at
-   {:fn/min
-    [{:fn/plus
-      [{:fn/timepoint [:time/first-entered-state :state/preauthorized]}
-       {:fn/period ["P6D"]}]}
-     {:fn/plus
-      [{:fn/timepoint [:time/booking-start]} {:fn/period ["P1D"]}]}
-     {:fn/timepoint [:time/booking-end]}]},
-   :actions
-   [{:name :action/calculate-full-refund}
-    {:name :action/stripe-refund-payment}
-    ;; Keep this action last in the list of actions for
-    ;; the transition
-    {:name :action/decline-booking}],
-   :from :state/preauthorized,
-   :to :state/expired}
+ :at {:fn/plus [{:fn/timepoint [:time/booking-start]} {:fn/period ["-PT1H"]}]},
+ :actions
+ [{:name :action/calculate-full-refund}
+  {:name :action/stripe-refund-payment}
+  ;; Keep this action last in the list of actions for
+  ;; the transition
+  {:name :action/decline-booking}],
+ :from :state/preauthorized,
+ :to :state/expired}
   {:name :transition/complete,
    :at
    {:fn/plus
