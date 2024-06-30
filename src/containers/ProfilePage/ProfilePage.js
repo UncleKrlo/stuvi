@@ -41,6 +41,7 @@ import css from './ProfilePage.module.css';
 import SectionDetailsMaybe from './SectionDetailsMaybe';
 import SectionTextMaybe from './SectionTextMaybe';
 import SectionMultiEnumMaybe from './SectionMultiEnumMaybe';
+import { ImageGallery } from '../../components/ProfileImageGallery/ProfileImageGallery';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
 const MIN_LENGTH_FOR_LONG_WORDS = 20;
@@ -220,15 +221,25 @@ export const MainContent = props => {
       <H2 as="h1" className={css.desktopHeading}>
         <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
       </H2>
-      {profileImages.map((url, index) => (
+      {/* {profileImages.map((url, index) => (
         <img
           key={index}
           src={url.imageUrl}
           alt={`Profile ${index + 1}`}
-          style={{ width: 200, height: 200, margin: 5 }}
+          className={css.galleryImage}
+          style={{ width: 200, height: 200, margin: 5, objectFit: 'cover', borderRadius:10 }}
         />
-      ))}
-      {hasBio ? <p className={css.bio}>{bioWithLinks}</p> : null}
+      ))} */}
+      {hasBio ? (
+        <>
+          <H4 as="h2" className={css.listingsTitle} style={{marginTop: 24}}>
+            <FormattedMessage id="ProfilePage.bioTitle" />
+          </H4>
+          <p className={css.bio}>{bioWithLinks}</p>
+        </>
+      ) : null}
+      <ImageGallery images={profileImages} />
+
       <CustomUserFields
         publicData={publicData}
         metadata={metadata}
