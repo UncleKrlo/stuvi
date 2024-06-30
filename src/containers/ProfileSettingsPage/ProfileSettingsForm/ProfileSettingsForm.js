@@ -28,6 +28,7 @@ import {
 } from '../../../components';
 
 import css from './ProfileSettingsForm.module.css';
+import ConfirmationModal from './ConfirmationModal';
 
 const ACCEPT_IMAGES = 'image/*';
 const UPLOAD_CHANGE_DELAY = 2000; // Show spinner so that browser has time to load img srcset
@@ -79,7 +80,14 @@ const DisplayNameMaybe = props => {
 };
 
 const FieldAddImage = props => {
-  const { formApi, aspectWidth = 1, aspectHeight = 1, onGalleryImageUpload, values, ...rest} = props;
+  const {
+    formApi,
+    aspectWidth = 1,
+    aspectHeight = 1,
+    onGalleryImageUpload,
+    values,
+    ...rest
+  } = props;
   return (
     <Field form={null} {...rest}>
       {fieldprops => {
@@ -89,7 +97,7 @@ const FieldAddImage = props => {
           const file = e.target.files[0];
           formApi.change(`addProfileImage`, file);
           formApi.blur(`addProfileImage`);
-          onGalleryImageUpload(formApi, values, file)
+          onGalleryImageUpload(formApi, values, file);
         };
         const inputProps = { accept, id: name, name, onChange, type };
         return (
@@ -112,7 +120,10 @@ class ProfileSettingsFormComponent extends Component {
     super(props);
 
     this.uploadDelayTimeoutId = null;
-    this.state = { uploadDelay: false };
+    this.state = {
+      uploadDelay: false,
+      loadingPhoto: false,
+    };
     this.submittedValues = {};
   }
 
@@ -132,11 +143,12 @@ class ProfileSettingsFormComponent extends Component {
   }
 
   onGalleryImageUpload = async (formApi, values, file) => {
-    console.log("trying to upload");
+    console.log('trying to upload');
     try {
       // TODO: set loader
+      this.setState({ loadingPhoto: true });
       const imageUrl = await uploadImageToS3(file);
-      // TODO: set loader off
+      this.setState({ loadingPhoto: false });
       const profileGallerySaved = this.props.initialValues?.profileGallery;
       const currentProfileGallery = values.profileGallery || [];
       formApi.change('profileGallery', [...currentProfileGallery, { imageUrl }]);
@@ -151,6 +163,11 @@ class ProfileSettingsFormComponent extends Component {
       const currentProfileGallery = values.profileGallery || [];
       const updatedProfileGallery = currentProfileGallery.filter((_, i) => i !== index);
       formApi.change('profileGallery', updatedProfileGallery);
+      // Espera a que se actualice el estado del formulario
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      // Ahora hacemos el submit
+      formApi.submit();
     } catch (error) {
       console.error('Error removing image:', error);
     }
@@ -451,22 +468,30 @@ class ProfileSettingsFormComponent extends Component {
                       {fields.map((name, index) => (
                         <Field name={`${name}.imageUrl`} key={name}>
                           {({ input }) => (
-                            <div className={css.galleryItem}>
-                              <img
-                                src={input.value}
-                                alt={`Profile ${index + 1}`}
-                                style={{ width: 100, height: 100, marginRight: '10px' }}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => this.onGalleryImageRemove(form, index, input.value, values)}
-                              >
-                                <FormattedMessage id="ProfileSettingsForm.removeImage" />
-                              </button>
-                            </div>
+                            <>
+                              <div className={css.galleryItem}>
+                                <img
+                                  src={input.value}
+                                  alt={`Profile ${index + 1}`}
+                                  style={{ width: 100, height: '100%', marginRight: '10px' }}
+                                />
+                                <button
+                                  type="button"
+                                  className={css.removeImage}
+                                  onClick={() =>
+                                    this.onGalleryImageRemove(form, index, input.value, values)
+                                  }
+                                >
+                                  <FormattedMessage id="ProfileSettingsForm.removeImage" />
+                                </button>
+                              </div>
+                            </>
                           )}
                         </Field>
                       ))}
+                      <div style={{ marginTop: 30, marginBottom: 30 }}>
+                        {this.state.loadingPhoto ? <IconSpinner /> : null}
+                      </div>
                       {fields.length < 5 && (
                         <FieldAddImage
                           id="addProfileImage"
