@@ -12,7 +12,9 @@ import { propTypes } from '../../../util/types';
 import * as validators from '../../../util/validators';
 import { isUploadImageOverLimitError } from '../../../util/errors';
 import { getPropsForCustomUserFieldInputs } from '../../../util/userHelpers';
+import { uploadImageToS3, deleteImageFromS3 } from './ProfileSettingsForm.duck';
 
+import { FieldArray } from 'react-final-form-arrays';
 import {
   Form,
   Avatar,
@@ -22,6 +24,7 @@ import {
   FieldTextInput,
   H4,
   CustomExtendedDataField,
+  AspectRatioWrapper,
 } from '../../../components';
 
 import css from './ProfileSettingsForm.module.css';
@@ -75,6 +78,35 @@ const DisplayNameMaybe = props => {
   );
 };
 
+const FieldAddImage = props => {
+  const { formApi, aspectWidth = 1, aspectHeight = 1, onGalleryImageUpload, values, ...rest} = props;
+  return (
+    <Field form={null} {...rest}>
+      {fieldprops => {
+        const { accept, input, label, disabled: fieldDisabled } = fieldprops;
+        const { name, type } = input;
+        const onChange = e => {
+          const file = e.target.files[0];
+          formApi.change(`addProfileImage`, file);
+          formApi.blur(`addProfileImage`);
+          onGalleryImageUpload(formApi, values, file)
+        };
+        const inputProps = { accept, id: name, name, onChange, type };
+        return (
+          <div className={css.addImageWrapper}>
+            <AspectRatioWrapper width={aspectWidth} height={aspectHeight}>
+              {fieldDisabled ? null : <input {...inputProps} className={css.addImageInput} />}
+              <label htmlFor={name} className={css.addImage}>
+                {label}
+              </label>
+            </AspectRatioWrapper>
+          </div>
+        );
+      }}
+    </Field>
+  );
+};
+
 class ProfileSettingsFormComponent extends Component {
   constructor(props) {
     super(props);
@@ -98,6 +130,31 @@ class ProfileSettingsFormComponent extends Component {
   componentWillUnmount() {
     window.clearTimeout(this.uploadDelayTimeoutId);
   }
+
+  onGalleryImageUpload = async (formApi, values, file) => {
+    console.log("trying to upload");
+    try {
+      // TODO: set loader
+      const imageUrl = await uploadImageToS3(file);
+      // TODO: set loader off
+      const profileGallerySaved = this.props.initialValues?.profileGallery;
+      const currentProfileGallery = values.profileGallery || [];
+      formApi.change('profileGallery', [...currentProfileGallery, { imageUrl }]);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  };
+
+  onGalleryImageRemove = async (formApi, index, imageUrl, values) => {
+    try {
+      await deleteImageFromS3(imageUrl);
+      const currentProfileGallery = values.profileGallery || [];
+      const updatedProfileGallery = currentProfileGallery.filter((_, i) => i !== index);
+      formApi.change('profileGallery', updatedProfileGallery);
+    } catch (error) {
+      console.error('Error removing image:', error);
+    }
+  };
 
   render() {
     return (
@@ -336,7 +393,11 @@ class ProfileSettingsFormComponent extends Component {
                     name="firstName"
                     label={firstNameLabel}
                     placeholder={firstNamePlaceholder}
-                    validate={firstNameRequired}
+                    validate={validators.required(
+                      intl.formatMessage({
+                        id: 'ProfileSettingsForm.firstNameRequired',
+                      })
+                    )}
                   />
                   <FieldTextInput
                     className={css.lastName}
@@ -345,7 +406,11 @@ class ProfileSettingsFormComponent extends Component {
                     name="lastName"
                     label={lastNameLabel}
                     placeholder={lastNamePlaceholder}
-                    validate={lastNameRequired}
+                    validate={validators.required(
+                      intl.formatMessage({
+                        id: 'ProfileSettingsForm.lastNameRequired',
+                      })
+                    )}
                   />
                 </div>
               </div>
@@ -360,8 +425,12 @@ class ProfileSettingsFormComponent extends Component {
                   type="textarea"
                   id="bio"
                   name="bio"
-                  label={bioLabel}
-                  placeholder={bioPlaceholder}
+                  label={intl.formatMessage({
+                    id: 'ProfileSettingsForm.bioLabel',
+                  })}
+                  placeholder={intl.formatMessage({
+                    id: 'ProfileSettingsForm.bioPlaceholder',
+                  })}
                 />
                 <p className={css.extraInfo}>
                   <FormattedMessage id="ProfileSettingsForm.bioInfo" values={{ marketplaceName }} />
@@ -372,6 +441,49 @@ class ProfileSettingsFormComponent extends Component {
                   <CustomExtendedDataField {...fieldProps} formId={formId} />
                 ))}
               </div>
+              <div className={css.sectionContainer}>
+                <H4 as="h2" className={css.sectionTitle}>
+                  <FormattedMessage id="ProfileSettingsForm.profileGalleryTitle" />
+                </H4>
+                <FieldArray name="profileGallery">
+                  {({ fields }) => (
+                    <div>
+                      {fields.map((name, index) => (
+                        <Field name={`${name}.imageUrl`} key={name}>
+                          {({ input }) => (
+                            <div className={css.galleryItem}>
+                              <img
+                                src={input.value}
+                                alt={`Profile ${index + 1}`}
+                                style={{ width: 100, height: 100, marginRight: '10px' }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => this.onGalleryImageRemove(form, index, input.value, values)}
+                              >
+                                <FormattedMessage id="ProfileSettingsForm.removeImage" />
+                              </button>
+                            </div>
+                          )}
+                        </Field>
+                      ))}
+                      {fields.length < 5 && (
+                        <FieldAddImage
+                          id="addProfileImage"
+                          name="addProfileImage"
+                          accept={ACCEPT_IMAGES}
+                          label={intl.formatMessage({ id: 'ProfileSettingsForm.addImage' })}
+                          type="file"
+                          values={values}
+                          onGalleryImageUpload={this.onGalleryImageUpload}
+                          formApi={form}
+                        />
+                      )}
+                    </div>
+                  )}
+                </FieldArray>
+              </div>
+
               {submitError}
               <Button
                 className={css.submitButton}

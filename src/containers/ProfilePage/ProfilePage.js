@@ -192,6 +192,7 @@ export const MainContent = props => {
     metadata,
     userFieldConfig,
     intl,
+    profileImages,
   } = props;
 
   const hasListings = listings.length > 0;
@@ -219,6 +220,14 @@ export const MainContent = props => {
       <H2 as="h1" className={css.desktopHeading}>
         <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
       </H2>
+      {profileImages.map((url, index) => (
+        <img
+          key={index}
+          src={url.imageUrl}
+          alt={`Profile ${index + 1}`}
+          style={{ width: 200, height: 200, margin: 5 }}
+        />
+      ))}
       {hasBio ? <p className={css.bio}>{bioWithLinks}</p> : null}
       <CustomUserFields
         publicData={publicData}
@@ -261,6 +270,7 @@ export const ProfilePageComponent = props => {
 
   const schemaTitleVars = { name: displayName, marketplaceName: config.marketplaceName };
   const schemaTitle = intl.formatMessage({ id: 'ProfilePage.schemaTitle' }, schemaTitleVars);
+  const profileImages = currentUser?.attributes?.profile?.protectedData?.profileGallery || [];
 
   if (userShowError && userShowError.status === 404) {
     return <NotFoundPage staticContext={props.staticContext} />;
@@ -291,6 +301,7 @@ export const ProfilePageComponent = props => {
           metadata={metadata}
           userFieldConfig={userFields}
           intl={intl}
+          profileImages={profileImages}
           {...rest}
         />
       </LayoutSideNavigation>
