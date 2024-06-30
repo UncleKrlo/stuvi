@@ -45,7 +45,7 @@ export const ProfileSettingsPageComponent = props => {
   const { userFields, userTypes = [] } = config.user;
 
   const handleSubmit = (values, userType) => {
-    const { firstName, lastName, displayName, bio: rawBio, ...rest } = values;
+    const { firstName, lastName, displayName, bio: rawBio, profileGallery, ...rest } = values;
 
     const displayNameMaybe = displayName
       ? { displayName: displayName.trim() }
@@ -62,8 +62,9 @@ export const ProfileSettingsPageComponent = props => {
       publicData: {
         ...pickUserFieldsData(rest, 'public', userType, userFields),
       },
-      protectedData: {
+      protectedData: {      
         ...pickUserFieldsData(rest, 'protected', userType, userFields),
+      profileGallery: values.profileGallery || []
       },
       privateData: {
         ...pickUserFieldsData(rest, 'private', userType, userFields),
@@ -97,6 +98,7 @@ export const ProfileSettingsPageComponent = props => {
   const isDisplayNameIncluded = userTypeConfig?.defaultUserFields?.displayName !== false;
   // ProfileSettingsForm decides if it's allowed to show the input field.
   const displayNameMaybe = isDisplayNameIncluded && displayName ? { displayName } : {};
+  const protectedDataWithGallery = {...protectedData, profileGallery: currentUser?.attributes?.profile?.protectedData?.profileGallery || []}
 
   const profileSettingsForm = user.id ? (
     <ProfileSettingsForm
@@ -109,7 +111,7 @@ export const ProfileSettingsPageComponent = props => {
         bio,
         profileImage: user.profileImage,
         ...initialValuesForUserFields(publicData, 'public', userType, userFields),
-        ...initialValuesForUserFields(protectedData, 'protected', userType, userFields),
+        ...protectedDataWithGallery,
         ...initialValuesForUserFields(privateData, 'private', userType, userFields),
       }}
       profileImage={profileImage}
