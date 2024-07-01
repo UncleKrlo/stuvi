@@ -454,7 +454,7 @@ class ProfileSettingsFormComponent extends Component {
                 </p>
               </div>
               <div className={classNames(css.sectionContainer, css.lastSection)}>
-                {userFieldProps.map(fieldProps => {
+                {userFieldProps?.map(fieldProps => {
                   if (fieldProps.key === 'pub_birthday') {
                     return (
                       <Field
@@ -471,6 +471,25 @@ class ProfileSettingsFormComponent extends Component {
                     <CustomExtendedDataField key={fieldProps.key} {...fieldProps} formId={formId} />
                   );
                 })}
+              </div>
+              <div className={css.sectionContainer}>
+                <H4 as="h2" className={css.sectionTitle}>
+                  <FormattedMessage id="ProfileSettingsForm.spotifyLinkTitle" />
+                </H4>
+                <FieldTextInput
+                  type="text"
+                  id="spotifyLink"
+                  name="spotifyLink"
+                  label={intl.formatMessage({
+                    id: 'ProfileSettingsForm.spotifyLinkLabel',
+                  })}
+                  placeholder={intl.formatMessage({
+                    id: 'ProfileSettingsForm.spotifyLinkPlaceholder',
+                  })}
+                />
+                <p className={css.extraInfo}>
+                  <FormattedMessage id="ProfileSettingsForm.spotifyLinkInfo" />
+                </p>
               </div>
               <div className={css.sectionContainer}>
                 <H4 as="h2" className={css.sectionTitle}>
