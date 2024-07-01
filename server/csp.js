@@ -125,28 +125,42 @@ module.exports = (reportUri, reportOnly) => {
   const imgSrcOverride = imgSrc.concat(
     'www.facebook.com',
     'profilegallery.s3.amazonaws.com',
-    '*.s3.amazonaws.com'
+    '*.s3.amazonaws.com',
+    'i.scdn.co',
+    'dailymix-images.scdn.co'
   );
- 
+
   const { scriptSrc = [self] } = defaultDirectives;
-  const scriptSrcOverride = scriptSrc.concat('connect.facebook.net', 'www.facebook.com');
- 
-  const { frameSrc = [self ] } = defaultDirectives;
-  const frameSrcOverride = frameSrc.concat('connect.facebook.net', 'www.facebook.com');
- 
+  const scriptSrcOverride = scriptSrc.concat(
+    'connect.facebook.net',
+    'www.facebook.com',
+    'open.spotify.com',
+    'accounts.spotify.com'
+  );
+
+  const { frameSrc = [self] } = defaultDirectives;
+  const frameSrcOverride = frameSrc.concat(
+    'connect.facebook.net',
+    'www.facebook.com',
+    'open.spotify.com',
+    'accounts.spotify.com'
+  );
+
   const { connectSrc = [self] } = defaultDirectives;
   const connectSrcOverride = connectSrc.concat(
     'www.facebook.com',
     'profilegallery.s3.amazonaws.com',
-    '*.s3.amazonaws.com'
+    '*.s3.amazonaws.com',
+    'api.spotify.com',
+    'accounts.spotify.com'
   );
- 
+
   const customDirectives = {
     // Example: Add custom directive override
     imgSrc: imgSrcOverride,
     scriptSrc: scriptSrcOverride,
     frameSrc: frameSrcOverride,
-    connectSrc: connectSrcOverride
+    connectSrc: connectSrcOverride,
   };
 
   // ================ END CUSTOM CSP URLs ================ //
