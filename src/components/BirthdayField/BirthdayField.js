@@ -1,6 +1,6 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import css from './BirthdayField.module.css'
 
 const BirthdayField = ({ input, meta, intl, formId }) => {
@@ -24,8 +24,7 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
       <DatePicker
         className={css.datePicker} 
         id={formId ? `${formId}.birthday` : 'birthday'}
-        selected={input.value ? new Date(input.value) : null}
-        onChange={handleChange}
+        selected={input.value && !isNaN(new Date(input.value).getTime()) ? new Date(input.value) : null}        onChange={handleChange}
         maxDate={minDate}
         showYearDropdown
         scrollableYearDropdown

@@ -209,7 +209,43 @@ export const CustomUserFields = props => {
     </>
   );
 };
+const SpotifyEmbed = ({ spotifyData }) => {
+  if (!spotifyData) return null;
 
+  const { type, id } = spotifyData;
+  const embedUrl = `https://open.spotify.com/embed/${type}/${id}`;
+  return (
+    <div className={css.spotifyEmbed}>
+      <h4 style={{marginTop:36}}>What I've been jamming to lately</h4>
+      {type == 'playlist' && (
+        <iframe
+          style={{ borderRadius: '12px', marginBottom:20 }}
+          className={css.iframe}
+          src={embedUrl}
+          width="70%"
+          height="360"
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      )}
+      {type == 'track' && (
+        <iframe
+          style={{ borderRadius: '12px',  marginBottom:20  }}
+          className={css.iframe}
+          src={embedUrl}
+          width="70%"
+          height="252"
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      )}
+    </div>
+  );
+};
 export const MainContent = props => {
   const {
     userShowError,
@@ -225,8 +261,8 @@ export const MainContent = props => {
     userFieldConfig,
     intl,
     profileImages,
+    spotifyData,
   } = props;
-
   const hasListings = listings.length > 0;
   const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
   const hasBio = !!bio;
@@ -252,25 +288,17 @@ export const MainContent = props => {
       <H2 as="h1" className={css.desktopHeading}>
         <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
       </H2>
-      {/* {profileImages.map((url, index) => (
-        <img
-          key={index}
-          src={url.imageUrl}
-          alt={`Profile ${index + 1}`}
-          className={css.galleryImage}
-          style={{ width: 200, height: 200, margin: 5, objectFit: 'cover', borderRadius:10 }}
-        />
-      ))} */}
+
       {hasBio ? (
         <>
-          <H4 as="h2" className={css.listingsTitle} style={{marginTop: 24}}>
+          <H4 as="h2" className={css.listingsTitle} style={{ marginTop: 24 }}>
             <FormattedMessage id="ProfilePage.bioTitle" />
           </H4>
           <p className={css.bio}>{bioWithLinks}</p>
         </>
       ) : null}
       <ImageGallery images={profileImages} />
-
+      <SpotifyEmbed spotifyData={spotifyData} />
       <CustomUserFields
         publicData={publicData}
         metadata={metadata}
@@ -312,7 +340,8 @@ export const ProfilePageComponent = props => {
 
   const schemaTitleVars = { name: displayName, marketplaceName: config.marketplaceName };
   const schemaTitle = intl.formatMessage({ id: 'ProfilePage.schemaTitle' }, schemaTitleVars);
-  const profileImages = currentUser?.attributes?.profile?.protectedData?.profileGallery || [];
+  const profileImages = profileUser?.attributes?.profile?.publicData?.profileGallery || [];
+  const spotifyData = profileUser?.attributes?.profile?.publicData?.spotifyEmbed || null;
 
   if (userShowError && userShowError.status === 404) {
     return <NotFoundPage staticContext={props.staticContext} />;
@@ -344,6 +373,7 @@ export const ProfilePageComponent = props => {
           userFieldConfig={userFields}
           intl={intl}
           profileImages={profileImages}
+          spotifyData={spotifyData}
           {...rest}
         />
       </LayoutSideNavigation>
