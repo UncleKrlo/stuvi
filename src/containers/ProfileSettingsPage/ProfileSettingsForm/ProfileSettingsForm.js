@@ -13,7 +13,6 @@ import * as validators from '../../../util/validators';
 import { isUploadImageOverLimitError } from '../../../util/errors';
 import { getPropsForCustomUserFieldInputs } from '../../../util/userHelpers';
 import { uploadImageToS3, deleteImageFromS3 } from './ProfileSettingsForm.duck';
-
 import { FieldArray } from 'react-final-form-arrays';
 import {
   Form,
@@ -25,6 +24,7 @@ import {
   H4,
   CustomExtendedDataField,
   AspectRatioWrapper,
+  BirthdayField,
 } from '../../../components';
 
 import css from './ProfileSettingsForm.module.css';
@@ -454,9 +454,23 @@ class ProfileSettingsFormComponent extends Component {
                 </p>
               </div>
               <div className={classNames(css.sectionContainer, css.lastSection)}>
-                {userFieldProps.map(fieldProps => (
-                  <CustomExtendedDataField {...fieldProps} formId={formId} />
-                ))}
+                {userFieldProps.map(fieldProps => {
+                  if (fieldProps.key === 'pub_birthday') {
+                    return (
+                      <Field
+                        key={fieldProps.key}
+                        component={BirthdayField}
+                        name={fieldProps.name}
+                        id={fieldProps.key}
+                        intl={intl}
+                        formId={formId}
+                      />
+                    );
+                  }
+                  return (
+                    <CustomExtendedDataField key={fieldProps.key} {...fieldProps} formId={formId} />
+                  );
+                })}
               </div>
               <div className={css.sectionContainer}>
                 <H4 as="h2" className={css.sectionTitle}>

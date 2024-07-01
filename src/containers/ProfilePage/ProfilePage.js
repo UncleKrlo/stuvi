@@ -156,23 +156,54 @@ export const DesktopReviews = props => {
   );
 };
 
+const calculateAge = (birthday) => {
+  const today = new Date();
+  const birthDate = new Date(birthday);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 export const CustomUserFields = props => {
-  const { publicData, metadata, userFieldConfig } = props;
+  const { publicData, metadata, userFieldConfig, intl } = props;
 
   const shouldPickUserField = fieldConfig => fieldConfig?.showConfig?.displayInProfile !== false;
   const propsForCustomFields =
     pickCustomFieldProps(publicData, metadata, userFieldConfig, 'userType', shouldPickUserField) ||
     [];
-
   return (
     <>
       <SectionDetailsMaybe {...props} />
       {propsForCustomFields.map(customFieldProps => {
-        const { schemaType, ...fieldProps } = customFieldProps;
+        const { schemaType, key, ...fieldProps } = customFieldProps;
+        if (key === 'birthday') {
+          const birthday = publicData[key];
+          if (birthday) {
+            const age = calculateAge(birthday);
+            return (
+              <div key={key} className={css.customField}>
+                <h4 className={css.customFieldTitle}>
+                  {intl.formatMessage({ id: 'ProfilePage.ageTitle' })}
+                </h4>
+                <p className={css.customFieldContent}>
+                  {intl.formatMessage(
+                    { id: 'ProfilePage.ageContent' },
+                    { age: age }
+                  )}
+                </p>
+              </div>
+            );
+          }
+          return null;
+        }
+
         return schemaType === SCHEMA_TYPE_MULTI_ENUM ? (
-          <SectionMultiEnumMaybe {...fieldProps} />
+          <SectionMultiEnumMaybe key={key} {...fieldProps} />
         ) : schemaType === SCHEMA_TYPE_TEXT ? (
-          <SectionTextMaybe {...fieldProps} />
+          <SectionTextMaybe key={key} {...fieldProps} />
         ) : null;
       })}
     </>
