@@ -1,7 +1,6 @@
 import React from 'react';
 // import DatePicker from 'react-datepicker';
-import DatePicker from "react-date-picker/dist/entry.nostyle"
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+// import './ReactDatePicker.module.css'
 import css from './BirthdayField.module.css'
 
 const BirthdayField = ({ input, meta, intl, formId }) => {
@@ -31,21 +30,17 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
       <label htmlFor={formId ? `${formId}.birthday` : 'birthday'}>
         {intl.formatMessage({ id: 'SignupForm.birthdayLabel' })}
       </label>
-      <DatePicker
-        className={css.datePicker}
+      {/* <DatePicker
+        className={css.datePicker} 
         id={formId ? `${formId}.birthday` : 'birthday'}
         value={input.value ? parseDate(input.value) : null}
         onChange={handleChange}
         maxDate={minDate}
-        format="y-MM-dd"
-        yearPlaceholder="yyyy"
-        monthPlaceholder="mm"
-        dayPlaceholder="dd"
-        clearIcon={null}
-        onBlur={input.onBlur}
-        onFocus={input.onFocus}
-        showLeadingZeros={false}
-      />
+        showYearDropdown
+        scrollableYearDropdown
+        yearDropdownItemNumber={100}
+        placeholderText={intl.formatMessage({ id: 'SignupForm.birthdayPlaceholder' })}
+      /> */}
       {meta.error && meta.touched && <span className={css.error}>{meta.error}</span>}
     </div>
   );
