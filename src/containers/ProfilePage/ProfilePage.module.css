@@ -31,7 +31,18 @@
     border-bottom: none;
   }
 }
+.customField {
+  margin-bottom: 24px;
+}
 
+.customFieldTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.customFieldContent {
+  font-size: 16px;
+}
 .avatar {
   margin: 30px 26px 29px 0;
   flex-shrink: 0;
