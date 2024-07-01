@@ -1,6 +1,8 @@
 import React from 'react';
-import DatePicker from 'react-date-picker';
-import css from './BirthdayField.module.css';
+// import DatePicker from 'react-datepicker';
+import DatePicker from "react-date-picker/dist/entry.nostyle"
+// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import css from './BirthdayField.module.css'
 
 const BirthdayField = ({ input, meta, intl, formId }) => {
   const minDate = new Date();
