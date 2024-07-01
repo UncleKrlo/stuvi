@@ -122,7 +122,11 @@ module.exports = (reportUri, reportOnly) => {
   // const exampleImgSrc = imgSrc.concat('my-custom-domain.example.com');
 
   const { imgSrc = [self] } = defaultDirectives;
-  const imgSrcOverride = imgSrc.concat('www.facebook.com');
+  const imgSrcOverride = imgSrc.concat(
+    'www.facebook.com',
+    'profilegallery.s3.amazonaws.com',
+    '*.s3.amazonaws.com'
+  );
  
   const { scriptSrc = [self] } = defaultDirectives;
   const scriptSrcOverride = scriptSrc.concat('connect.facebook.net', 'www.facebook.com');
@@ -131,7 +135,11 @@ module.exports = (reportUri, reportOnly) => {
   const frameSrcOverride = frameSrc.concat('connect.facebook.net', 'www.facebook.com');
  
   const { connectSrc = [self] } = defaultDirectives;
-  const connectSrcOverride = connectSrc.concat('www.facebook.com');
+  const connectSrcOverride = connectSrc.concat(
+    'www.facebook.com',
+    'profilegallery.s3.amazonaws.com',
+    '*.s3.amazonaws.com'
+  );
  
   const customDirectives = {
     // Example: Add custom directive override
