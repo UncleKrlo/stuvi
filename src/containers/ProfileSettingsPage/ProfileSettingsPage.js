@@ -43,9 +43,20 @@ export const ProfileSettingsPageComponent = props => {
   } = props;
 
   const { userFields, userTypes = [] } = config.user;
+  const parseSpotifyLink = link => {
+    const regex = /https:\/\/open\.spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/;
+    const match = link.match(regex);
+    if (match) {
+      return {
+        type: match[1],
+        id: match[2],
+      };
+    }
+    return null;
+  };
 
   const handleSubmit = (values, userType) => {
-    const { firstName, lastName, displayName, bio: rawBio, ...rest } = values;
+    const { firstName, lastName, displayName, bio: rawBio, profileGallery, ...rest } = values;
 
     const displayNameMaybe = displayName
       ? { displayName: displayName.trim() }
@@ -53,6 +64,7 @@ export const ProfileSettingsPageComponent = props => {
 
     // Ensure that the optional bio is a string
     const bio = rawBio || '';
+    const spotifyData = parseSpotifyLink(values.spotifyLink);
 
     const profile = {
       firstName: firstName.trim(),
@@ -61,9 +73,12 @@ export const ProfileSettingsPageComponent = props => {
       bio,
       publicData: {
         ...pickUserFieldsData(rest, 'public', userType, userFields),
+        profileGallery: values.profileGallery || [],
+        spotifyEmbed: spotifyData,
       },
       protectedData: {
         ...pickUserFieldsData(rest, 'protected', userType, userFields),
+        spotifyLink: values.spotifyLink,
       },
       privateData: {
         ...pickUserFieldsData(rest, 'private', userType, userFields),
@@ -97,6 +112,15 @@ export const ProfileSettingsPageComponent = props => {
   const isDisplayNameIncluded = userTypeConfig?.defaultUserFields?.displayName !== false;
   // ProfileSettingsForm decides if it's allowed to show the input field.
   const displayNameMaybe = isDisplayNameIncluded && displayName ? { displayName } : {};
+  const protectedDataWithCustomData = {
+    ...initialValuesForUserFields(protectedData, 'protected', userType, userFields),
+    spotifyLink: currentUser?.attributes?.profile?.protectedData?.spotifyLink
+  };
+  const publicDataWithCustomData = {
+    ...initialValuesForUserFields(publicData, 'public', userType, userFields), 
+    profileGallery: currentUser?.attributes?.profile?.publicData?.profileGallery || [],
+    spotifyEmbed: currentUser?.attributes?.profile?.publicData?.spotifyEmbed,
+  }
 
   const profileSettingsForm = user.id ? (
     <ProfileSettingsForm
@@ -108,8 +132,8 @@ export const ProfileSettingsPageComponent = props => {
         ...displayNameMaybe,
         bio,
         profileImage: user.profileImage,
-        ...initialValuesForUserFields(publicData, 'public', userType, userFields),
-        ...initialValuesForUserFields(protectedData, 'protected', userType, userFields),
+        ...publicDataWithCustomData,
+        ...protectedDataWithCustomData,
         ...initialValuesForUserFields(privateData, 'private', userType, userFields),
       }}
       profileImage={profileImage}

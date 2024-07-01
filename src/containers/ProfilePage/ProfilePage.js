@@ -41,6 +41,7 @@ import css from './ProfilePage.module.css';
 import SectionDetailsMaybe from './SectionDetailsMaybe';
 import SectionTextMaybe from './SectionTextMaybe';
 import SectionMultiEnumMaybe from './SectionMultiEnumMaybe';
+import { ImageGallery } from '../../components/ProfileImageGallery/ProfileImageGallery';
 
 const MAX_MOBILE_SCREEN_WIDTH = 768;
 const MIN_LENGTH_FOR_LONG_WORDS = 20;
@@ -155,29 +156,96 @@ export const DesktopReviews = props => {
   );
 };
 
+const calculateAge = (birthday) => {
+  const today = new Date();
+  const birthDate = new Date(birthday);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 export const CustomUserFields = props => {
-  const { publicData, metadata, userFieldConfig } = props;
+  const { publicData, metadata, userFieldConfig, intl } = props;
 
   const shouldPickUserField = fieldConfig => fieldConfig?.showConfig?.displayInProfile !== false;
   const propsForCustomFields =
     pickCustomFieldProps(publicData, metadata, userFieldConfig, 'userType', shouldPickUserField) ||
     [];
-
   return (
     <>
       <SectionDetailsMaybe {...props} />
       {propsForCustomFields.map(customFieldProps => {
-        const { schemaType, ...fieldProps } = customFieldProps;
+        const { schemaType, key, ...fieldProps } = customFieldProps;
+        if (key === 'birthday') {
+          const birthday = publicData[key];
+          if (birthday) {
+            const age = calculateAge(birthday);
+            return (
+              <div key={key} className={css.customField}>
+                <h4 className={css.customFieldTitle}>
+                  {intl.formatMessage({ id: 'ProfilePage.ageTitle' })}
+                </h4>
+                <p className={css.customFieldContent}>
+                  {intl.formatMessage(
+                    { id: 'ProfilePage.ageContent' },
+                    { age: age }
+                  )}
+                </p>
+              </div>
+            );
+          }
+          return null;
+        }
+
         return schemaType === SCHEMA_TYPE_MULTI_ENUM ? (
-          <SectionMultiEnumMaybe {...fieldProps} />
+          <SectionMultiEnumMaybe key={key} {...fieldProps} />
         ) : schemaType === SCHEMA_TYPE_TEXT ? (
-          <SectionTextMaybe {...fieldProps} />
+          <SectionTextMaybe key={key} {...fieldProps} />
         ) : null;
       })}
     </>
   );
 };
+const SpotifyEmbed = ({ spotifyData }) => {
+  if (!spotifyData) return null;
 
+  const { type, id } = spotifyData;
+  const embedUrl = `https://open.spotify.com/embed/${type}/${id}`;
+  return (
+    <div className={css.spotifyEmbed}>
+      <h4 style={{marginTop:36}}>What I've been jamming to lately</h4>
+      {type == 'playlist' && (
+        <iframe
+          style={{ borderRadius: '12px', marginBottom:20 }}
+          className={css.iframe}
+          src={embedUrl}
+          width="70%"
+          height="360"
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      )}
+      {type == 'track' && (
+        <iframe
+          style={{ borderRadius: '12px',  marginBottom:20  }}
+          className={css.iframe}
+          src={embedUrl}
+          width="70%"
+          height="252"
+          frameBorder="0"
+          allowFullScreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      )}
+    </div>
+  );
+};
 export const MainContent = props => {
   const {
     userShowError,
@@ -192,8 +260,9 @@ export const MainContent = props => {
     metadata,
     userFieldConfig,
     intl,
+    profileImages,
+    spotifyData,
   } = props;
-
   const hasListings = listings.length > 0;
   const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
   const hasBio = !!bio;
@@ -219,7 +288,17 @@ export const MainContent = props => {
       <H2 as="h1" className={css.desktopHeading}>
         <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
       </H2>
-      {hasBio ? <p className={css.bio}>{bioWithLinks}</p> : null}
+
+      {hasBio ? (
+        <>
+          <H4 as="h2" className={css.listingsTitle} style={{ marginTop: 24 }}>
+            <FormattedMessage id="ProfilePage.bioTitle" />
+          </H4>
+          <p className={css.bio}>{bioWithLinks}</p>
+        </>
+      ) : null}
+      <ImageGallery images={profileImages} />
+      <SpotifyEmbed spotifyData={spotifyData} />
       <CustomUserFields
         publicData={publicData}
         metadata={metadata}
@@ -261,6 +340,8 @@ export const ProfilePageComponent = props => {
 
   const schemaTitleVars = { name: displayName, marketplaceName: config.marketplaceName };
   const schemaTitle = intl.formatMessage({ id: 'ProfilePage.schemaTitle' }, schemaTitleVars);
+  const profileImages = profileUser?.attributes?.profile?.publicData?.profileGallery || [];
+  const spotifyData = profileUser?.attributes?.profile?.publicData?.spotifyEmbed || null;
 
   if (userShowError && userShowError.status === 404) {
     return <NotFoundPage staticContext={props.staticContext} />;
@@ -291,6 +372,8 @@ export const ProfilePageComponent = props => {
           metadata={metadata}
           userFieldConfig={userFields}
           intl={intl}
+          profileImages={profileImages}
+          spotifyData={spotifyData}
           {...rest}
         />
       </LayoutSideNavigation>

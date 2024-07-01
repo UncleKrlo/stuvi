@@ -31,7 +31,18 @@
     border-bottom: none;
   }
 }
+.customField {
+  margin-bottom: 24px;
+}
 
+.customFieldTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.customFieldContent {
+  font-size: 16px;
+}
 .avatar {
   margin: 30px 26px 29px 0;
   flex-shrink: 0;
@@ -96,14 +107,19 @@
   margin: 5px 0 24px 0;
 
   @media (--viewportMedium) {
-    margin: 4px 0 51px 0;
+    margin: 4px 0 30px 0;
   }
   @media (--viewportLarge) {
-    margin: 0 0 56px 0;
+    margin: 0 0 30px 0;
     max-width: 600px;
   }
 }
-
+ .iframe{
+  width: 100%;
+  @media (--viewportMedium) {
+    width: 70% ;
+  }
+ }
 .listingsContainer {
   composes: clearfix from global;
   border-top: 1px solid var(--colorGrey100);

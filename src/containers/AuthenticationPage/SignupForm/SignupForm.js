@@ -1,16 +1,23 @@
 import React from 'react';
 import { bool, node, string } from 'prop-types';
 import { compose } from 'redux';
-import { Form as FinalForm } from 'react-final-form';
+import { Field, Form as FinalForm } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import classNames from 'classnames';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { FormattedMessage, injectIntl, intlShape } from '../../../util/reactIntl';
 import { propTypes } from '../../../util/types';
 import * as validators from '../../../util/validators';
 import { getPropsForCustomUserFieldInputs } from '../../../util/userHelpers';
 
-import { Form, PrimaryButton, FieldTextInput, CustomExtendedDataField } from '../../../components';
+import {
+  Form,
+  PrimaryButton,
+  FieldTextInput,
+  CustomExtendedDataField,
+  BirthdayField,
+} from '../../../components';
 
 import FieldSelectUserType from '../FieldSelectUserType';
 import UserFieldDisplayName from '../UserFieldDisplayName';
@@ -190,7 +197,7 @@ const SignupFormComponent = props => (
               />
 
               <UserFieldPhoneNumber
-                formName="SignupForm"
+                formName="SignupForm" 
                 className={css.row}
                 userTypeConfig={userTypeConfig}
                 intl={intl}
@@ -200,9 +207,24 @@ const SignupFormComponent = props => (
 
           {showCustomUserFields ? (
             <div className={css.customFields}>
-              {userFieldProps.map(fieldProps => (
-                <CustomExtendedDataField {...fieldProps} formId={formId} />
-              ))}
+              {userFieldProps.map(fieldProps => {
+                if (fieldProps.key === 'pub_birthday') {
+                  return (
+                    <Field
+                      key={fieldProps.key}
+                      component={BirthdayField}
+                      name={fieldProps.name}
+                      id={fieldProps.key}
+                      intl={intl}
+                      formId={formId}
+                      style={{width:"100%"}}
+                    />
+                  );
+                }
+                return (
+                  <CustomExtendedDataField key={fieldProps.key} {...fieldProps} formId={formId} />
+                );
+              })}
             </div>
           ) : null}
 
