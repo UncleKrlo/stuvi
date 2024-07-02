@@ -637,7 +637,7 @@
   "ProfilePage.ageContent": "{age} years old",
   "ProfilePage.closeGallery": "Close",
   "ProfilePage.bioTitle": "About Me",
-  "ProfilePage.desktopHeading": "Hello, I am {name}.",
+  "ProfilePage.desktopHeading": "Hello, I'm {name}.",
   "ProfilePage.detailNo": "No",
   "ProfilePage.detailYes": "Yes",
   "ProfilePage.detailsTitle": "Details",

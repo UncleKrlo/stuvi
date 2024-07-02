@@ -1,7 +1,6 @@
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import css from './BirthdayField.module.css'
+import DatePicker from 'react-date-picker';
+import css from './BirthdayField.module.css';
 
 const BirthdayField = ({ input, meta, intl, formId }) => {
   const minDate = new Date();
@@ -9,12 +8,21 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
 
   const handleChange = (date) => {
     if (date) {
-      const formattedDate = date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      const adjustedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const formattedDate = adjustedDate.toISOString().split('T')[0];
       input.onChange(formattedDate);
     } else {
       input.onChange(null);
     }
   };
+  const parseDate = (dateString) => {
+    if (dateString) {
+      const [year, month, day] = dateString.split('-');
+      return new Date(year, month - 1, day);
+    }
+    return null;
+  };
+
 
   return (
     <div className={css.birthdayField}>
@@ -22,14 +30,19 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
         {intl.formatMessage({ id: 'SignupForm.birthdayLabel' })}
       </label>
       <DatePicker
-        className={css.datePicker} 
+        className={css.datePicker}
         id={formId ? `${formId}.birthday` : 'birthday'}
-        selected={input.value && !isNaN(new Date(input.value).getTime()) ? new Date(input.value) : null}        onChange={handleChange}
+        value={input.value ? parseDate(input.value) : null}
+        onChange={handleChange}
         maxDate={minDate}
-        showYearDropdown
-        scrollableYearDropdown
-        yearDropdownItemNumber={100}
-        placeholderText={intl.formatMessage({ id: 'SignupForm.birthdayPlaceholder' })}
+        format="y-MM-dd"
+        yearPlaceholder="yyyy"
+        monthPlaceholder="mm"
+        dayPlaceholder="dd"
+        clearIcon={null}
+        onBlur={input.onBlur}
+        onFocus={input.onFocus}
+        showLeadingZeros={false}
       />
       {meta.error && meta.touched && <span className={css.error}>{meta.error}</span>}
     </div>

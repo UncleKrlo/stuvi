@@ -4,7 +4,6 @@ import { compose } from 'redux';
 import { Field, Form as FinalForm } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 import classNames from 'classnames';
-import 'react-datepicker/dist/react-datepicker.css';
 
 import { FormattedMessage, injectIntl, intlShape } from '../../../util/reactIntl';
 import { propTypes } from '../../../util/types';
@@ -197,7 +196,7 @@ const SignupFormComponent = props => (
               />
 
               <UserFieldPhoneNumber
-                formName="SignupForm" 
+                formName="SignupForm"
                 className={css.row}
                 userTypeConfig={userTypeConfig}
                 intl={intl}
@@ -217,7 +216,7 @@ const SignupFormComponent = props => (
                       id={fieldProps.key}
                       intl={intl}
                       formId={formId}
-                      style={{width:"100%"}}
+                      style={{ width: '100%' }}
                     />
                   );
                 }
