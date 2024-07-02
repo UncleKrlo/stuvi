@@ -45,7 +45,7 @@ export const ProfileSettingsPageComponent = props => {
   const { userFields, userTypes = [] } = config.user;
   const parseSpotifyLink = link => {
     const regex = /https:\/\/open\.spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/;
-    const match = link.match(regex);
+    const match = link?.match(regex);
     if (match) {
       return {
         type: match[1],
