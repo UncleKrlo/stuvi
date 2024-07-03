@@ -655,6 +655,7 @@
   "ProfileSettingsForm.spotifyLinkPlaceholder": "https://open.spotify.com/track/...",
   "ProfileSettingsForm.spotifyLinkInfo": "Add a link to your favorite song or playlist on Spotify. Feel free to self-promo :)",
   "ProfileSettingsForm.profileGalleryTitle": "Your Profile Gallery",
+  "ProfileSettingsForm.profileGalleryInfo": "You can upload a few photos of yourself here to show studio owners and other artists who you are",
   "ProfileSettingsForm.addImage": "+ Add a photo...",
   "ProfileSettingsForm.removeImage": "Remove Photo",
   "ProfileSettingsForm.addYourProfilePicture": "+ Add your profile picture…",
