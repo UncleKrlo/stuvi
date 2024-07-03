@@ -453,7 +453,7 @@ class ProfileSettingsFormComponent extends Component {
                   <FormattedMessage id="ProfileSettingsForm.bioInfo" values={{ marketplaceName }} />
                 </p>
               </div>
-              <div className={classNames(css.sectionContainer, css.lastSection)}>
+              <div className={classNames(css.sectionContainer)}>
                 {userFieldProps?.map(fieldProps => {
                   if (fieldProps.key === 'pub_birthday') {
                     return (
@@ -464,6 +464,15 @@ class ProfileSettingsFormComponent extends Component {
                         id={fieldProps.key}
                         intl={intl}
                         formId={formId}
+                        validate={validators.composeValidators(
+                          validators.required(
+                            intl.formatMessage({ id: 'ProfileSettingsForm.required' })
+                          ),
+                          validators.ageWithinRange(
+                            intl.formatMessage({ id: 'ProfileSettingsForm.tooYoung' }),
+                            intl.formatMessage({ id: 'ProfileSettingsForm.tooOld' })
+                          )
+                        )}
                       />
                     );
                   }
@@ -472,7 +481,7 @@ class ProfileSettingsFormComponent extends Component {
                   );
                 })}
               </div>
-              <div className={css.sectionContainer}>
+              <div className={classNames(css.sectionContainer)}>
                 <H4 as="h2" className={css.sectionTitle}>
                   <FormattedMessage id="ProfileSettingsForm.spotifyLinkTitle" />
                 </H4>
@@ -491,10 +500,13 @@ class ProfileSettingsFormComponent extends Component {
                   <FormattedMessage id="ProfileSettingsForm.spotifyLinkInfo" />
                 </p>
               </div>
-              <div className={css.sectionContainer}>
+              <div className={classNames(css.sectionContainer, css.lastSection)}>
                 <H4 as="h2" className={css.sectionTitle}>
                   <FormattedMessage id="ProfileSettingsForm.profileGalleryTitle" />
                 </H4>
+                <p className={css.extraInfo}>
+                  <FormattedMessage id="ProfileSettingsForm.profileGalleryInfo" />
+                </p>
                 <FieldArray name="profileGallery">
                   {({ fields }) => (
                     <div>
