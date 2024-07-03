@@ -464,6 +464,15 @@ class ProfileSettingsFormComponent extends Component {
                         id={fieldProps.key}
                         intl={intl}
                         formId={formId}
+                        validate={validators.composeValidators(
+                          validators.required(
+                            intl.formatMessage({ id: 'ProfileSettingsForm.required' })
+                          ),
+                          validators.ageWithinRange(
+                            intl.formatMessage({ id: 'ProfileSettingsForm.tooYoung' }),
+                            intl.formatMessage({ id: 'ProfileSettingsForm.tooOld' })
+                          )
+                        )}
                       />
                     );
                   }
