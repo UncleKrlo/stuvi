@@ -7,6 +7,30 @@ const { LatLng, Money } = sdkTypes;
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 256;
 
+export const ageWithinRange = (tooYoungMessage, tooOldMessage) => value => {
+  if (!value) {
+    return tooYoungMessage; // Si no hay valor, consideramos que es demasiado joven
+  }
+
+  const birthDate = new Date(value);
+  const today = new Date();
+  
+  // Calculamos la edad
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  if (age < 18) {
+    return tooYoungMessage;
+  } else if (age > 110) {
+    return tooOldMessage;
+  }
+
+  return VALID;
+};
+
 const isNonEmptyString = val => {
   return typeof val === 'string' && val.trim().length > 0;
 };
