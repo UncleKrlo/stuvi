@@ -97,7 +97,7 @@
                             </tr>
                           </tbody>
                         </table>
-                        {{/eq}}{{#eq "line-item/night" code}}
+                        {{/eq}}{{#eq "line-item/night" code}} 
                         <table align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
                           <tbody>
                             <tr>
@@ -255,7 +255,9 @@
                     </tr>
                   </tbody>
                 </table>
-                <p style="font-size:16px;line-height:1.4;margin:16px 0;color:#484848;font-weight:700">{{t "BookingNewRequest.AcceptText" "You need to accept the request by {date,date,::hmmaYYYYMMMd}. Otherwise the request will expire automatically and you won't get paid." date=delayed-transition.run-at}}</p>
+                <p style="font-size:16px;line-height:1.4;margin:16px 0;color:#484848;font-weight:700">
+                  {{t "BookingNewRequest.AcceptText" "You need to accept the request at least one hour before {time,date,::hmma} on {dayOfWeek,date,::EEE}, {date,date,::MMMd}. Otherwise the request will expire automatically and you won't get paid." time=booking.start dayOfWeek=booking.start date=booking.start}}
+                </p>
                 <p style="font-size:16px;line-height:1.4;margin:16px 0;color:#484848">{{t "BookingNewRequest.DeclineOptionText" "If the booked dates don't work for you, you can also choose to decline the request."}}</p>
                 <table style="padding:16px 0 0" align="center" border="0" cellPadding="0" cellSpacing="0" role="presentation" width="100%">
                   <tbody>

@@ -76,7 +76,9 @@
    :from :state/preauthorized,
    :to :state/declined}
   {:name :transition/expire,
- :at {:fn/plus [{:fn/timepoint [:time/booking-start]} {:fn/period ["-PT1H"]}]},
+ :at 
+ {:fn/plus 
+ [{:fn/timepoint [:time/booking-start]} {:fn/period ["-PT1H"]}]},
  :actions
  [{:name :action/calculate-full-refund}
   {:name :action/stripe-refund-payment}
