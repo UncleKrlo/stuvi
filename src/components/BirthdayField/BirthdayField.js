@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import css from './BirthdayField.module.css';
+import { FormattedMessage } from 'react-intl';
 
 const BirthdayField = ({ input, meta, intl, formId }) => {
   const { touched, error } = meta;
@@ -9,23 +10,23 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
   const [displayValue, setDisplayValue] = useState('');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  const formatDateForDisplay = (dateString) => {
+  const formatDateForDisplay = dateString => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
   };
 
-  const parseDateForInput = (dateString) => {
+  const parseDateForInput = dateString => {
     if (!dateString) return '';
     const parts = dateString.split('/');
     if (parts.length !== 3) return '';
-    
+
     let [month, day, year] = parts.map(part => part.replace(/\D/g, ''));
-    
+
     month = month.slice(0, 2).padStart(2, '0');
     day = day.slice(0, 2).padStart(2, '0');
     year = year.slice(0, 4).padStart(4, '0');
-    
+
     const monthNum = parseInt(month, 10);
     const dayNum = parseInt(day, 10);
     if (monthNum < 1 || monthNum > 12 || dayNum < 1 || dayNum > 31) {
@@ -46,7 +47,7 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
     setDisplayValue(formatDateForDisplay(input.value));
   }, [input.value]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const newValue = e.target.value;
     if (e.target.type === 'date') {
       const parsedDate = parseDateForInput(formatDateForDisplay(newValue));
@@ -75,7 +76,7 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
     }
   };
 
-  const handleBlur = (e) => {
+  const handleBlur = e => {
     setIsDatePickerOpen(false);
     if (inputRef.current) {
       inputRef.current.type = 'text';
@@ -97,7 +98,7 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
         <input
           {...input}
           ref={inputRef}
-          type={isDatePickerOpen ? "date" : "text"}
+          type={isDatePickerOpen ? 'date' : 'text'}
           id={formId ? `${formId}.birthday` : 'birthday'}
           className={`${css.dateInput} ${showError ? css.error : ''}`}
           placeholder="mm/dd/yyyy"
@@ -109,6 +110,9 @@ const BirthdayField = ({ input, meta, intl, formId }) => {
         />
       </div>
       {showError && <span className={css.errorMessage}>{error}</span>}
+      <p className={css.extraInfo}>
+        <FormattedMessage id="ProfileSettingsForm.birthdayInfo" />
+      </p>
     </div>
   );
 };

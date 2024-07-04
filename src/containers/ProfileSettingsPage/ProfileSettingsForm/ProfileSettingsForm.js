@@ -480,11 +480,6 @@ class ProfileSettingsFormComponent extends Component {
                     <CustomExtendedDataField key={fieldProps.key} {...fieldProps} formId={formId} />
                   );
                 })}
-              </div>
-              <div className={classNames(css.sectionContainer)}>
-                <H4 as="h2" className={css.sectionTitle}>
-                  <FormattedMessage id="ProfileSettingsForm.spotifyLinkTitle" />
-                </H4>
                 <FieldTextInput
                   type="text"
                   id="spotifyLink"
@@ -499,7 +494,10 @@ class ProfileSettingsFormComponent extends Component {
                 <p className={css.extraInfo}>
                   <FormattedMessage id="ProfileSettingsForm.spotifyLinkInfo" />
                 </p>
+              
               </div>
+              
+                
               <div className={classNames(css.sectionContainer, css.lastSection)}>
                 <H4 as="h2" className={css.sectionTitle}>
                   <FormattedMessage id="ProfileSettingsForm.profileGalleryTitle" />

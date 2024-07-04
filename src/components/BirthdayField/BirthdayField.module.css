@@ -1,7 +1,9 @@
 .inputWrapper {
   position: relative;
 }
-
+.birthdayField {
+  margin-bottom: 24px;
+}
 .dateInput {
   width: 100%;
   padding: 10px 15px;
@@ -10,6 +12,15 @@
   border-radius: 5px;
   background-color: white;
   color: #4a4a4a;
+}
+.extraInfo {
+  composes: textSmall from global;
+  color: var(--colorGrey300);
+  margin-top: 11px;
+
+  @media (--viewportMedium) {
+    margin-top: 16px;
+  }
 }
 
 .dateInput:focus {
