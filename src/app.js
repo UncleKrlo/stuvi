@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { any, string } from 'prop-types';
 import ReactDOMServer from 'react-dom/server';
 
@@ -13,6 +13,7 @@ import loadable from '@loadable/component';
 import difference from 'lodash/difference';
 import mapValues from 'lodash/mapValues';
 import moment from 'moment';
+import Intercom from '@intercom/messenger-js-sdk';
 
 // Configs and store setup
 import defaultConfig from './config/configDefault';
@@ -208,6 +209,31 @@ const EnvironmentVariableWarning = props => {
   );
 };
 
+const IntercomProvider = ({ children, user }) => {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Inicializa Intercom para todos los visitantes
+      Intercom({
+        app_id: 'uw33q0bz',
+      });
+
+      // Si el usuario está autenticado, actualiza la sesión con la información del usuario
+      // Se puede hacer un console.log(user) bien util (Carlos)
+      if (user) {
+        Intercom('update', {
+          app_id: 'uw33q0bz',
+          user_id: user.id.uuid,
+          name: user.attributes.profile.firstName,
+          email: user.attributes.email,
+          created_at: Math.floor(new Date(user.attributes.createdAt).getTime() / 1000),
+        });
+      }
+    }
+  }, [user]);
+
+  return children;
+};
+
 export const ClientApp = props => {
   const { store, hostedTranslations = {}, hostedConfig = {} } = props;
   const appConfig = mergeConfig(hostedConfig, defaultConfig);
@@ -257,7 +283,9 @@ export const ClientApp = props => {
           <HelmetProvider>
             <IncludeScripts config={appConfig} />
             <BrowserRouter>
-              <Routes logLoadDataCalls={logLoadDataCalls} />
+              <IntercomProvider user={store.getState().user.currentUser}>
+                <Routes logLoadDataCalls={logLoadDataCalls} />
+              </IntercomProvider>
             </BrowserRouter>
           </HelmetProvider>
         </Provider>
