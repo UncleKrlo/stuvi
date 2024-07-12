@@ -30,6 +30,9 @@ const defaultDirectives = {
     '*.tiles.mapbox.com',
     'api.mapbox.com',
     'events.mapbox.com',
+    'api-iam.intercom.io',
+    'wss://*.intercom.io',
+    '*.intercomcdn.com',
 
     // Google Analytics
     // TODO: Signals support needs more work
@@ -95,8 +98,9 @@ const defaultDirectives = {
     'www.googletagmanager.com',
     '*.google-analytics.com',
     'js.stripe.com',
-    // Plausible analytics
     'plausible.io',
+    'widget.intercom.io',
+    '*.intercomcdn.com',
   ],
   styleSrc: [self, unsafeInline, 'fonts.googleapis.com', 'api.mapbox.com'],
 };
@@ -127,7 +131,9 @@ module.exports = (reportUri, reportOnly) => {
     'profilegallery.s3.amazonaws.com',
     '*.s3.amazonaws.com',
     'i.scdn.co',
-    'dailymix-images.scdn.co'
+    'dailymix-images.scdn.co',
+    'static.intercomassets.com',
+    '*.intercomcdn.com'
   );
 
   const { scriptSrc = [self] } = defaultDirectives;
@@ -135,7 +141,9 @@ module.exports = (reportUri, reportOnly) => {
     'connect.facebook.net',
     'www.facebook.com',
     'open.spotify.com',
-    'accounts.spotify.com'
+    'accounts.spotify.com',
+    'widget.intercom.io',
+    '*.intercomcdn.com',
   );
 
   const { frameSrc = [self] } = defaultDirectives;
@@ -143,7 +151,8 @@ module.exports = (reportUri, reportOnly) => {
     'connect.facebook.net',
     'www.facebook.com',
     'open.spotify.com',
-    'accounts.spotify.com'
+    'accounts.spotify.com',
+    'intercom-sheets.com'
   );
 
   const { connectSrc = [self] } = defaultDirectives;
@@ -152,7 +161,10 @@ module.exports = (reportUri, reportOnly) => {
     'profilegallery.s3.amazonaws.com',
     '*.s3.amazonaws.com',
     'api.spotify.com',
-    'accounts.spotify.com'
+    'accounts.spotify.com',
+    'api-iam.intercom.io',
+    'wss://*.intercom.io',
+    '*.intercomcdn.com'
   );
 
   const customDirectives = {
