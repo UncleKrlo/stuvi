@@ -34,22 +34,48 @@ const BlockDefault = props => {
   } = props;
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
+  const isCardElement = blockId && blockId.includes("studiosbytype");
+
+  const handleCardClick = (href) => {
+    if (href) {
+      window.location.href = href;
+    }
+  };
 
   return (
     <BlockContainer id={blockId} className={classes}>
-      <FieldMedia
-        media={media}
-        sizes={responsiveImageSizes}
-        className={mediaClassName}
-        options={options}
-      />
-      {hasTextComponentFields ? (
-        <div className={classNames(textClassName, css.text)}>
-          <Field data={title} options={options} />
-          <Field data={text} options={options} />
-          <Field data={callToAction} className={ctaButtonClass} options={options} />
+      {isCardElement ? (
+        <div 
+          className={classNames(css.card, mediaClassName)}
+          onClick={() => handleCardClick(callToAction?.href)}
+        >
+          <FieldMedia
+            media={media}
+            sizes={responsiveImageSizes}
+            options={options}
+          />
+          <div className={classNames(textClassName, css.cardText)}>
+            <Field data={title} options={options} />
+            <Field data={text} options={options} />
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <>
+          <FieldMedia
+            media={media}
+            sizes={responsiveImageSizes}
+            className={mediaClassName}
+            options={options}
+          />
+          {hasTextComponentFields && (
+            <div className={classNames(textClassName, css.text)}>
+              <Field data={title} options={options} />
+              <Field data={text} options={options} />
+              <Field data={callToAction} className={ctaButtonClass} options={options} />
+            </div>
+          )}
+        </>
+      )}
     </BlockContainer>
   );
 };
