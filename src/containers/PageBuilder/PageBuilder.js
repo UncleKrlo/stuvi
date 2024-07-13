@@ -8,6 +8,7 @@ import { validProps } from './Field';
 
 import SectionBuilder from './SectionBuilder/SectionBuilder.js';
 import StaticPage from './StaticPage.js';
+import Accordion from '../../components/Accordion/Accordion.js';
 
 import css from './PageBuilder.module.css';
 
@@ -80,6 +81,24 @@ const LoadingSpinner = () => {
  * @param {Object} props
  * @returns page component
  */
+
+ const FaqSectionBuilder = ({ sections, options }) => {
+  const faqSections = sections.map((section, index) => {
+    const faqItems = section.blocks.map(block => ({
+      question: block.title.content,
+      answer: block.text.content
+    }));
+
+    return (
+      <div key={index}>
+        <Accordion items={faqItems} title={section.title.content} description={section.description.content} />
+      </div>
+    );
+  });
+
+  return <>{faqSections}</>;
+};
+
 const PageBuilder = props => {
   const {
     pageAssetsData,
@@ -102,6 +121,12 @@ const PageBuilder = props => {
   const { sections = [], meta = {} } = pageAssetsData || {};
   const pageMetaProps = getMetadata(meta, schemaType, options?.fieldComponents);
 
+  // console.log(pageAssetsData)
+
+  const isFaqPage = pageAssetsData?.sections?.some(section => 
+    section.sectionName && section.sectionName.includes('FAQ')
+  );
+
   const layoutAreas = `
     topbar
     main
@@ -120,6 +145,8 @@ const PageBuilder = props => {
               <Main as="main" className={css.main}>
                 {sections.length === 0 && inProgress ? (
                   <LoadingSpinner />
+                ) : isFaqPage ? (
+                  <FaqSectionBuilder sections={sections} options={options} />
                 ) : (
                   <SectionBuilder sections={sections} options={options} />
                 )}
