@@ -37,6 +37,7 @@ const BlockDefault = props => {
   const isCardElement = blockId && blockId.includes('studiosbytype');
   const isArtistSection = title.content == 'Stuvi for Artists';
   const isStudioSection = title.content == 'Stuvi for Studios';
+  const isLandingSection = title.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
   const handleCardClick = href => {
     if (href) {
       window.location.href = href;
@@ -72,6 +73,17 @@ const BlockDefault = props => {
           ) : isArtistSection ? (
             <video
               src={'https://stuviassets.s3.amazonaws.com/gif-for-artists.mp4'}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className={css.video}
+            >
+              Your browser does not support this video.
+            </video>
+          ) : isLandingSection ? (
+            <video
+              src={'https://stuviassets.s3.amazonaws.com/Hush+Maeve+Jules+Blondie.mp4'}
               autoPlay
               loop
               muted
