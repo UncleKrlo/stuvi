@@ -133,7 +133,8 @@ module.exports = (reportUri, reportOnly) => {
     'i.scdn.co',
     'dailymix-images.scdn.co',
     'static.intercomassets.com',
-    '*.intercomcdn.com'
+    '*.intercomcdn.com',
+    'stuviassets.s3.amazonaws.com'
   );
 
   const { scriptSrc = [self] } = defaultDirectives;
@@ -164,7 +165,8 @@ module.exports = (reportUri, reportOnly) => {
     'accounts.spotify.com',
     'api-iam.intercom.io',
     'wss://*.intercom.io',
-    '*.intercomcdn.com'
+    '*.intercomcdn.com',
+    'stuviassets.s3.amazonaws.com'
   );
 
   const customDirectives = {
@@ -173,6 +175,7 @@ module.exports = (reportUri, reportOnly) => {
     scriptSrc: scriptSrcOverride,
     frameSrc: frameSrcOverride,
     connectSrc: connectSrcOverride,
+    mediaSrc: [self, 'stuviassets.s3.amazonaws.com', '*.s3.amazonaws.com'],
   };
 
   // ================ END CUSTOM CSP URLs ================ //
