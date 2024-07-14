@@ -33,9 +33,10 @@ const SectionFeatures = props => {
   // E.g. { h1: { component: MyAwesomeHeader } }
   const fieldComponents = options?.fieldComponents;
   const fieldOptions = { fieldComponents };
-  const isGifSection = title === "Stuvi for Artists"
+  const isGifSection = blocks[0].blockName === 'Stuvi For Artists';
   const hasHeaderFields = hasDataInFields([title, description, callToAction], fieldOptions);
   const hasBlocks = blocks?.length > 0;
+  // console.log(blocks[0].blockName === 'Stuvi For Artists')
 
   return (
     <SectionContainer
@@ -52,7 +53,6 @@ const SectionFeatures = props => {
           <Field data={callToAction} className={defaultClasses.ctaButton} options={fieldOptions} />
         </header>
       ) : null}
-      {isGifSection ? <img src={'https://picsum.photos/200/300'}/> : null}
       {hasBlocks ? (
         <div
           className={classNames(defaultClasses.blockContainer, css.featuresMain, {
