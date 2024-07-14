@@ -65,11 +65,9 @@ const BlockDefault = props => {
               loop
               muted
               playsInline
-              className={mediaClassName}
-              width={400}
-              height={400}
+              className={css.video}
             >
-              Tu navegador no soporta el elemento de video.
+              Your browser does not support this video.
             </video>
           ) : isArtistSection ? (
             <video
@@ -78,11 +76,9 @@ const BlockDefault = props => {
               loop
               muted
               playsInline
-              className={mediaClassName}
-              width={400}
-              height={400}
+              className={css.video}
             >
-              Tu navegador no soporta el elemento de video.
+              Your browser does not support this video.
             </video>
           ) : (
             <FieldMedia
