@@ -32,7 +32,6 @@ const BlockDefault = props => {
     responsiveImageSizes,
     options,
   } = props;
-  console.log(options);
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
   const isCardElement = blockId && blockId.includes('studiosbytype');
