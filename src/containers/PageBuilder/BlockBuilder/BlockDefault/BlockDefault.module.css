@@ -1,3 +1,4 @@
+@import '../../../../styles/customMediaQueries.css';
 .root {
 }
 
@@ -30,4 +31,65 @@
 
 .cardText {
   padding: 16px;
+}
+.align {
+  text-align: left;
+  justify-self: start;
+
+  @media (--viewportMedium) {
+    text-align: center;
+    justify-self: center;
+  }
+}
+
+
+.ctaButtonOutlined {
+  composes: align;
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 15px;
+  border-radius: 4px;
+  color: white;
+  border-width: 2px;
+  border-style: solid;
+  text-decoration: none!important;
+  box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
+  font-weight: 500;
+  margin-top: 24px;
+
+  &:hover {
+    text-decoration: none;
+    background-color: white;
+    border-color: transparent;
+  }
+}
+.ctaButtonOutlinedGreen {
+  composes: align;
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 15px;
+  border-radius: 4px;
+  color: white;
+  border-width: 2px;
+  border-style: solid;
+  text-decoration: none!important;
+  box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
+  font-weight: 500;
+  margin-top: 24px;
+
+  &:hover {
+    text-decoration: none;
+    background-color: white;
+    color: #2a623d!important;
+    border-color: transparent;
+  }
+}
+
+.artistSectionText {
+  margin-left: 200px; /* Ajusta este valor según necesites */
+}
+@media (max-width: 950px) {
+  .artistSectionText {
+    margin-left: 10px; /* Margen más pequeño en móviles */
+  }
 }

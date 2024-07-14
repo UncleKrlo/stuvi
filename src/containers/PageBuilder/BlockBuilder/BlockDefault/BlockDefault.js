@@ -32,11 +32,13 @@ const BlockDefault = props => {
     responsiveImageSizes,
     options,
   } = props;
+  console.log(options);
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
-  const isCardElement = blockId && blockId.includes("studiosbytype");
-
-  const handleCardClick = (href) => {
+  const isCardElement = blockId && blockId.includes('studiosbytype');
+  const isArtistSection = title.content == 'Stuvi for Artists';
+  const isStudioSection = title.content == 'Stuvi for Studios';
+  const handleCardClick = href => {
     if (href) {
       window.location.href = href;
     }
@@ -45,15 +47,11 @@ const BlockDefault = props => {
   return (
     <BlockContainer id={blockId} className={classes}>
       {isCardElement ? (
-        <div 
+        <div
           className={classNames(css.card, mediaClassName)}
           onClick={() => handleCardClick(callToAction?.href)}
         >
-          <FieldMedia
-            media={media}
-            sizes={responsiveImageSizes}
-            options={options}
-          />
+          <FieldMedia media={media} sizes={responsiveImageSizes} options={options} />
           <div className={classNames(textClassName, css.cardText)}>
             <Field data={title} options={options} />
             <Field data={text} options={options} />
@@ -61,17 +59,65 @@ const BlockDefault = props => {
         </div>
       ) : (
         <>
-          <FieldMedia
-            media={media}
-            sizes={responsiveImageSizes}
-            className={mediaClassName}
-            options={options}
-          />
+          {isStudioSection ? (
+            <video
+              src={'https://stuviassets.s3.amazonaws.com/gif-for-studios.mp4'}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className={mediaClassName}
+              width={400}
+              height={400}
+            >
+              Tu navegador no soporta el elemento de video.
+            </video>
+          ) : isArtistSection ? (
+            <video
+              src={'https://stuviassets.s3.amazonaws.com/gif-for-artists.mp4'}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className={mediaClassName}
+              width={400}
+              height={400}
+            >
+              Tu navegador no soporta el elemento de video.
+            </video>
+          ) : (
+            <FieldMedia
+              media={media}
+              sizes={responsiveImageSizes}
+              className={mediaClassName}
+              options={options}
+            />
+          )}
           {hasTextComponentFields && (
-            <div className={classNames(textClassName, css.text)}>
-              <Field data={title} options={options} />
+            <div
+              className={classNames(
+                textClassName,
+                css.text,
+                { [css.artistSectionText]: isArtistSection } // Añade esta línea
+              )}
+            >
+              {isStudioSection || isArtistSection ? (
+                <h2>{title.content}</h2>
+              ) : (
+                <Field data={title} options={options} />
+              )}
               <Field data={text} options={options} />
-              <Field data={callToAction} className={ctaButtonClass} options={options} />
+              {isStudioSection ? (
+                <Field
+                  data={callToAction}
+                  className={css.ctaButtonOutlinedGreen}
+                  options={options}
+                />
+              ) : isArtistSection ? (
+                <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
+              ) : (
+                <Field data={callToAction} className={ctaButtonClass} options={options} />
+              )}
             </div>
           )}
         </>
