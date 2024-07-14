@@ -33,9 +33,10 @@ const SectionFeatures = props => {
   // E.g. { h1: { component: MyAwesomeHeader } }
   const fieldComponents = options?.fieldComponents;
   const fieldOptions = { fieldComponents };
-
+  const isGifSection = blocks[0].blockName === 'Stuvi For Artists';
   const hasHeaderFields = hasDataInFields([title, description, callToAction], fieldOptions);
   const hasBlocks = blocks?.length > 0;
+  // console.log(blocks[0].blockName === 'Stuvi For Artists')
 
   return (
     <SectionContainer
