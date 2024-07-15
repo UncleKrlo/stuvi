@@ -8,6 +8,14 @@
   margin-bottom: 0;
 }
 
+.titleLanding {
+  font-size: 79px;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
 .text {
   width: 100%;
   margin-top: 20px;
@@ -42,19 +50,18 @@
   }
 }
 
-
 .ctaButtonOutlined {
   composes: align;
   display: inline-block;
-  padding: 8px 20px;
+  padding: 15px 25px;
   font-size: 15px;
-  border-radius: 4px;
+  border-radius: 10px;
   color: white;
   border-width: 2px;
   border-style: solid;
-  text-decoration: none!important;
+  text-decoration: none !important;
   box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
-  font-weight: 500;
+  font-weight: 700;
   margin-top: 24px;
 
   &:hover {
@@ -66,21 +73,21 @@
 .ctaButtonOutlinedGreen {
   composes: align;
   display: inline-block;
-  padding: 8px 20px;
+  padding: 15px 25px;
   font-size: 15px;
-  border-radius: 4px;
+  border-radius: 10px;
   color: white;
   border-width: 2px;
   border-style: solid;
-  text-decoration: none!important;
+  text-decoration: none !important;
   box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
-  font-weight: 500;
+  font-weight: 700;
   margin-top: 24px;
 
   &:hover {
     text-decoration: none;
     background-color: white;
-    color: #2a623d!important;
+    color: #2a623d !important;
     border-color: transparent;
   }
 }
@@ -92,6 +99,8 @@
 .video {
   width: 100%;
   max-width: 400px;
+  /* width: 400px;
+  height: 400px; */
   height: auto;
   object-fit: contain;
   border: 4px solid rgba(255, 255, 255, 0.85);
@@ -107,5 +116,109 @@
     border-width: 4px; /* Opcional: reduce el grosor del borde en móviles */
   }
 }
+.titleJoin {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.33;
+  font-weight: bold;
+  color: var(--colorGrey900);
+  word-break: break-all;
+  word-break: break-word;
+  hyphens: auto;
+  text-align: center;
+  font-size: 32px;
+}
+.stuviLinkJoin {
+  color: var(--marketplaceColor);
+  font-style: italic;
+  text-align: center;
+  margin-top: 0;
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+.animatedButtonContainerCentered {
+  display: flex;
+  justify-content: center;
+}
+.nav_cta_wrap_dark {
+  position: relative;
+  display: inline-block;
+  margin-top: 20px !important;
+
+  a {
+    color: white !important;
+  }
+
+  .cta_jag_blue {
+    background-color: var(--marketplaceColor);
+    font-weight: 700;
+    display: inline-block;
+    padding: 15px 50px;
+    /* max-width: 30px; */
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    border: 2px white solid;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 2;
+    position: relative;
+    margin-left: 0 !important;
+  }
+
+  .animation_dark {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 130%;
+    height: 170%;
+    max-width: 400px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+  }
+
+  &:hover {
+    .cta_jag_blue {
+      background-color: transparent;
+      color: var(--marketplaceColor) !important;
+    }
+    .animation_dark {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+}
 
 
+
+@media (max-width: 650px) {
+  .ctaButtonOutlined {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .ctaButtonOutlinedGreen {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .nav_cta_wrap_dark {
+    width: 100%;
+    .cta_jag_blue {
+      width: 100%;
+    }
+    .cta_jag_blue:hover {
+      background-color: white;
+    }
+    .animation_dark {
+      width: 0%;
+    }
+  }
+  .titleLanding {
+    font-size: 55px;
+    text-align: center;
+  }
+}
