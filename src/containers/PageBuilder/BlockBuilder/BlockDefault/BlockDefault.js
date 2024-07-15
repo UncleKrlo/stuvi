@@ -6,6 +6,7 @@ import Field, { hasDataInFields } from '../../Field';
 import BlockContainer from '../BlockContainer';
 
 import css from './BlockDefault.module.css';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 const FieldMedia = props => {
   const { className, media, sizes, options } = props;
@@ -37,6 +38,9 @@ const BlockDefault = props => {
   const isCardElement = blockId && blockId.includes('studiosbytype');
   const isArtistSection = title.content == 'Stuvi for Artists';
   const isStudioSection = title.content == 'Stuvi for Studios';
+  const isLandingSection = title.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
+  const isJoinSection = blockId && blockId.includes('joinus');
+
   const handleCardClick = href => {
     if (href) {
       window.location.href = href;
@@ -80,6 +84,17 @@ const BlockDefault = props => {
             >
               Your browser does not support this video.
             </video>
+          ) : isLandingSection ? (
+            <video
+              src={'https://stuviassets.s3.amazonaws.com/Hush+Maeve+Jules+Blondie.mp4'}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className={css.video}
+            >
+              Your browser does not support this video.
+            </video>
           ) : (
             <FieldMedia
               media={media}
@@ -98,10 +113,22 @@ const BlockDefault = props => {
             >
               {isStudioSection || isArtistSection ? (
                 <h2>{title.content}</h2>
+              ) : isLandingSection ? (
+                <h1 className={css.titleLanding}>{title.content}</h1>
+              ) : isJoinSection ? (
+                <h1 className={css.titleJoin}>{title.content}</h1>
               ) : (
                 <Field data={title} options={options} />
               )}
-              <Field data={text} options={options} />
+              {isJoinSection ? (
+                <>
+                  <Field data={text} options={options} />
+                  <h3 className={css.stuviLinkJoin}>stuvi.space</h3>
+                </>
+              ) : (
+                <Field data={text} options={options} />
+              )}
+
               {isStudioSection ? (
                 <Field
                   data={callToAction}
@@ -110,6 +137,27 @@ const BlockDefault = props => {
                 />
               ) : isArtistSection ? (
                 <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
+              ) : isLandingSection || isJoinSection ? (
+                <div
+                  className={
+                    isJoinSection ? css.animatedButtonContainerCentered : css.animatedButtonContainer
+                  }
+                >
+                  <div className={css.nav_cta_wrap_dark}>
+                    <img
+                      src="https://stuviassets.s3.amazonaws.com/background-button-animation.gif"
+                      className={css.animation_dark}
+                    />
+                    <Link
+                      to={
+                        callToAction.href
+                      }
+                      className={css.cta_jag_blue}
+                    >
+                      {callToAction.content}
+                    </Link>
+                  </div>
+                </div>
               ) : (
                 <Field data={callToAction} className={ctaButtonClass} options={options} />
               )}

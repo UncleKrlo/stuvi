@@ -29,6 +29,7 @@ const SectionHero = props => {
 
   const hasHeaderFields = hasDataInFields([title, description, callToAction], fieldOptions);
 
+  // console.log(title.content);
   return (
     <SectionContainer
       id={sectionId}
@@ -38,9 +39,31 @@ const SectionHero = props => {
       options={fieldOptions}
     >
       {hasHeaderFields ? (
+
+        // Voy a pusehar esto comentado por si queremos cambiar vainas del hero component inline después (currently not in use)
+
         <header className={defaultClasses.sectionDetails}>
-          <Field data={title} className={defaultClasses.title} options={fieldOptions} />
-          <Field data={description} className={defaultClasses.description} options={fieldOptions} />
+          <Field
+            data={title}
+            className={defaultClasses.title}
+            // style={{
+            //   color: '#ffffff',
+            //   fontWeight: 'bold',
+              //           textShadow: `
+              //   -2px -2px 0 #000,
+              //    2px -2px 0 #000,
+              //   -2px  2px 0 #000,
+              //    2px  2px 0 #000
+              // `,
+            // }}
+            options={fieldOptions}
+          />
+          <Field
+            data={description}
+            className={defaultClasses.description}
+            // style={{ color: '#ffffff', fontWeight: 'bold' }}
+            options={fieldOptions}
+          />
           <Field data={callToAction} className={defaultClasses.ctaButton} options={fieldOptions} />
         </header>
       ) : null}
