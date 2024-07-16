@@ -282,7 +282,7 @@
 
 .sectionMultiEnum,
 .sectionDetails {
-  padding: 0 24px;
+  /* padding: 0 24px; */
   margin-bottom: 30px;
 
   @media (--viewportMedium) {

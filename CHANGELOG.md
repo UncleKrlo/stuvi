@@ -14,6 +14,18 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2024-XX-XX
 
+- [change] Update express.js (v4.19.2) and nodemon (3.1.4).
+  [#421](https://github.com/sharetribe/web-template/pull/421)
+- [add] richText.js: support parentheses on autolinked URLs.
+  [#419](https://github.com/sharetribe/web-template/pull/419)
+- [fix] Safari has a bug related to reading array directly from JSON-LD script tag.
+  [#418](https://github.com/sharetribe/web-template/pull/418)
+- [fix] There could be rare time-windows when indexing has not caught up with deleted & closed
+  listings. This might result those listings to be included to listing queries.
+  [#417](https://github.com/sharetribe/web-template/pull/417)
+
+## [v5.2.1] 2024-07-02
+
 - [fix] fix: calculateShippingFee (when shippingPriceInSubunitsAdditionalItems is 0, no shipping fee
   was included) [#414](https://github.com/sharetribe/web-template/pull/414)
 - [fix] Remove stock from schema if there's no stock in use.
@@ -32,6 +44,8 @@ way to update this template, but currently, we follow a pattern:
   [#403](https://github.com/sharetribe/web-template/pull/403)
 - [change] FilterComponent: relax generated name-attribute for inputs: allow camelCase.
   [#402](https://github.com/sharetribe/web-template/pull/402)
+
+  [v5.2.1]: https://github.com/sharetribe/web-template/compare/v5.2.0...v5.2.1
 
 ## [v5.2.0] 2024-05-28
 
