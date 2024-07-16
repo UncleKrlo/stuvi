@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { func, node, object, shape, string } from 'prop-types';
 import classNames from 'classnames';
 
@@ -40,6 +40,26 @@ const BlockDefault = props => {
   const isStudioSection = title?.content === 'Stuvi for Studios';
   const isLandingSection = title?.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
   const isJoinSection = blockId && blockId.includes('joinus');
+
+  const [isOldSafari, setIsOldSafari] = useState(false);
+
+  useEffect(() => {
+    function getSafariVersion() {
+      var ua = navigator.userAgent.toLowerCase();
+      if (ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1) {
+        var versionMatch = ua.match(/version\/([\d.]+)/);
+        if (versionMatch) {
+          return parseFloat(versionMatch[1]);
+        }
+      }
+      return false;
+    }
+
+    const safariVersion = getSafariVersion();
+    if (safariVersion && safariVersion < 17.3) {
+      setIsOldSafari(true);
+    }
+  }, []);
 
   const handleCardClick = href => {
     if (href && typeof href === 'string') {
@@ -105,11 +125,9 @@ const BlockDefault = props => {
           )}
           {hasTextComponentFields && (
             <div
-              className={classNames(
-                textClassName,
-                css.text,
-                { [css.artistSectionText]: isArtistSection }
-              )}
+              className={classNames(textClassName, css.text, {
+                [css.artistSectionText]: isArtistSection,
+              })}
             >
               {isStudioSection || isArtistSection ? (
                 <h2>{title.content}</h2>
@@ -137,10 +155,13 @@ const BlockDefault = props => {
                 />
               ) : isArtistSection ? (
                 <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
-              ) : isLandingSection || isJoinSection ? (
+              ) 
+              : (isLandingSection || isJoinSection) && !isOldSafari ? (
                 <div
                   className={
-                    isJoinSection ? css.animatedButtonContainerCentered : css.animatedButtonContainer
+                    isJoinSection
+                      ? css.animatedButtonContainerCentered
+                      : css.animatedButtonContainer
                   }
                 >
                   <div className={css.nav_cta_wrap_dark}>
@@ -148,16 +169,20 @@ const BlockDefault = props => {
                       src="https://stuviassets.s3.amazonaws.com/background-button-animation.gif"
                       className={css.animation_dark}
                     />
-                    <Link
-                      to={callToAction.href}
-                      className={css.cta_jag_blue}
-                    >
+                    <Link to={callToAction.href} className={css.cta_jag_blue}>
                       {callToAction.content}
                     </Link>
                   </div>
                 </div>
-              ) : (
+              ) 
+              : (
+                <div className={
+                  isJoinSection
+                    ? css.animatedButtonContainerCentered
+                    : null
+                } >
                 <Field data={callToAction} className={ctaButtonClass} options={options} />
+                </div>
               )}
             </div>
           )}

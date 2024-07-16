@@ -137,14 +137,17 @@
   margin-bottom: 15px;
 }
 .animatedButtonContainerCentered {
+  display: -webkit-box; /* Prefijo para Safari */
+  display: -ms-flexbox; /* Prefijo para IE */
   display: flex;
   justify-content: center;
 }
+
 .nav_cta_wrap_dark {
   position: relative;
   display: inline-block;
   margin-top: 20px !important;
-
+  
   a {
     color: white !important;
   }
@@ -154,7 +157,6 @@
     font-weight: 700;
     display: inline-block;
     padding: 15px 50px;
-    /* max-width: 30px; */
     border-radius: 10px;
     text-decoration: none;
     color: white;
@@ -171,6 +173,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    -webkit-transform: translate(-50%, -50%) scale(0); /* Prefijo para Safari */
+    -ms-transform: translate(-50%, -50%) scale(0); /* Prefijo para IE */
     transform: translate(-50%, -50%) scale(0);
     width: 130%;
     height: 170%;
@@ -186,25 +190,23 @@
       color: var(--marketplaceColor) !important;
     }
     .animation_dark {
+      -webkit-transform: translate(-50%, -50%) scale(1); /* Prefijo para Safari */
+      -ms-transform: translate(-50%, -50%) scale(1); /* Prefijo para IE */
       transform: translate(-50%, -50%) scale(1);
       opacity: 1;
     }
   }
 }
 
-
-
 @media (max-width: 650px) {
-  .ctaButtonOutlined {
+  .ctaButtonOutlined, .ctaButtonOutlinedGreen {
+    display: -webkit-box; /* Prefijo para Safari */
+    display: -ms-flexbox; /* Prefijo para IE */
     display: flex;
     justify-content: center;
     width: 100%;
   }
-  .ctaButtonOutlinedGreen {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
+  
   .nav_cta_wrap_dark {
     width: 100%;
     .cta_jag_blue {
@@ -217,6 +219,7 @@
       width: 0%;
     }
   }
+  
   .titleLanding {
     font-size: 55px;
     text-align: center;
