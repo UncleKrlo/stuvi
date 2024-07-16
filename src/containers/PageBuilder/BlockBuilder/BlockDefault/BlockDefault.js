@@ -6,7 +6,7 @@ import Field, { hasDataInFields } from '../../Field';
 import BlockContainer from '../BlockContainer';
 
 import css from './BlockDefault.module.css';
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link } from 'react-router-dom';
 
 const FieldMedia = props => {
   const { className, media, sizes, options } = props;
@@ -36,13 +36,13 @@ const BlockDefault = props => {
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
   const isCardElement = blockId && blockId.includes('studiosbytype');
-  const isArtistSection = title.content == 'Stuvi for Artists';
-  const isStudioSection = title.content == 'Stuvi for Studios';
-  const isLandingSection = title.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
+  const isArtistSection = title?.content === 'Stuvi for Artists';
+  const isStudioSection = title?.content === 'Stuvi for Studios';
+  const isLandingSection = title?.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
   const isJoinSection = blockId && blockId.includes('joinus');
 
   const handleCardClick = href => {
-    if (href) {
+    if (href && typeof href === 'string') {
       window.location.href = href;
     }
   };
@@ -108,7 +108,7 @@ const BlockDefault = props => {
               className={classNames(
                 textClassName,
                 css.text,
-                { [css.artistSectionText]: isArtistSection } // Añade esta línea
+                { [css.artistSectionText]: isArtistSection }
               )}
             >
               {isStudioSection || isArtistSection ? (
@@ -149,9 +149,7 @@ const BlockDefault = props => {
                       className={css.animation_dark}
                     />
                     <Link
-                      to={
-                        callToAction.href
-                      }
+                      to={callToAction.href}
                       className={css.cta_jag_blue}
                     >
                       {callToAction.content}
