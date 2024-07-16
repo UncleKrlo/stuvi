@@ -147,7 +147,7 @@
   position: relative;
   display: inline-block;
   margin-top: 20px !important;
-  
+
   a {
     color: white !important;
   }
@@ -206,7 +206,7 @@
     justify-content: center;
     width: 100%;
   }
-  
+
   .nav_cta_wrap_dark {
     width: 100%;
     .cta_jag_blue {
@@ -219,7 +219,7 @@
       width: 0%;
     }
   }
-  
+
   .titleLanding {
     font-size: 55px;
     text-align: center;

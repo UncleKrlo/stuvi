@@ -32,6 +32,7 @@ const defaultDirectives = {
     'events.mapbox.com',
     'api-iam.intercom.io',
     'wss://*.intercom.io',
+    '*.intercomcdn.com',
 
     // Google Analytics
     // TODO: Signals support needs more work
@@ -97,8 +98,9 @@ const defaultDirectives = {
     'www.googletagmanager.com',
     '*.google-analytics.com',
     'js.stripe.com',
-    // Plausible analytics
     'plausible.io',
+    'widget.intercom.io',
+    '*.intercomcdn.com',
   ],
   styleSrc: [self, unsafeInline, 'fonts.googleapis.com', 'api.mapbox.com'],
 };
@@ -141,7 +143,8 @@ module.exports = (reportUri, reportOnly) => {
     'www.facebook.com',
     'open.spotify.com',
     'accounts.spotify.com',
-    'widget.intercom.io'
+    'widget.intercom.io',
+    '*.intercomcdn.com',
   );
 
   const { frameSrc = [self] } = defaultDirectives;

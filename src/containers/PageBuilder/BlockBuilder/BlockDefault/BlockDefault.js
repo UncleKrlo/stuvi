@@ -8,6 +8,7 @@ import BlockContainer from '../BlockContainer';
 import css from './BlockDefault.module.css';
 import { Link } from 'react-router-dom';
 
+
 const FieldMedia = props => {
   const { className, media, sizes, options } = props;
   const hasMediaField = hasDataInFields([media], options);
@@ -36,6 +37,7 @@ const BlockDefault = props => {
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
   const isCardElement = blockId && blockId.includes('studiosbytype');
+
   const isArtistSection = title?.content === 'Stuvi for Artists';
   const isStudioSection = title?.content === 'Stuvi for Studios';
   const isLandingSection = title?.content === 'MUSIC STUDIOS THAT FIT YOUR VISION';
@@ -63,6 +65,7 @@ const BlockDefault = props => {
 
   const handleCardClick = href => {
     if (href && typeof href === 'string') {
+
       window.location.href = href;
     }
   };
@@ -128,6 +131,7 @@ const BlockDefault = props => {
               className={classNames(textClassName, css.text, {
                 [css.artistSectionText]: isArtistSection,
               })}
+
             >
               {isStudioSection || isArtistSection ? (
                 <h2>{title.content}</h2>
