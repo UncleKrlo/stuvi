@@ -84,6 +84,7 @@ const getOrderParams = (pageData, shippingDetails, optionalPaymentParams, config
   const hasMixingEngineerFee = pageData.orderData?.mixingEngineerFee?.length > 0; 
   const hasComposerFee = pageData.orderData?.composerFee?.length > 0;
   const hasProducerFee = pageData.orderData?.producerFee?.length > 0; 
+  const hasDiscountCode = pageData.orderData?.discountCode?.length > 0;
   // These are the order parameters for the first payment-related transition
   // which is either initiate-transition or initiate-transition-after-enquiry
   const orderParams = {
@@ -91,6 +92,7 @@ const getOrderParams = (pageData, shippingDetails, optionalPaymentParams, config
     ...deliveryMethodMaybe,
     hasSoundEngineerFee,
     hasMixingEngineerFee,
+    hasDiscountCode,
     hasComposerFee, 
     hasProducerFee,
     ...quantityMaybe,

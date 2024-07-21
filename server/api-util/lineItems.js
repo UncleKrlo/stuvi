@@ -16,7 +16,14 @@ const { Money } = types;
  * @param {*} currency should point to the currency of listing's price.
  */
 
- const resolveSoundEngineerFee = listing => {
+ const resolveDiscountCode = (orderData, unitPrice) => {
+  if (orderData.hasDiscountCode) {
+    return true;
+  }
+  return false;
+};
+
+const resolveSoundEngineerFee = listing => {
   const soundEngineerFee = listing.attributes.publicData.soundEngineerFee || {};
   const { amount, currency } = soundEngineerFee || {};
   return amount && currency ? new Money(amount, currency) : null;
@@ -32,7 +39,7 @@ const resolveComposerFee = listing => {
   return amount && currency ? new Money(amount, currency) : null;
 };
 const resolveProducerFee = listing => {
-  const producerFee  = listing.attributes.publicData.producerFee || {};
+  const producerFee = listing.attributes.publicData.producerFee || {};
   const { amount, currency } = producerFee || {};
   return amount && currency ? new Money(amount, currency) : null;
 };
@@ -136,7 +143,7 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
  * @param {Object} customerCommission
  * @returns {Array} lineItems
  */
-  exports.transactionLineItems = (listing, orderData, providerCommission, customerCommission) => {
+exports.transactionLineItems = (listing, orderData, providerCommission, customerCommission) => {
   const publicData = listing.attributes.publicData;
   const unitPrice = listing.attributes.price;
   const currency = unitPrice.currency;
@@ -181,39 +188,39 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
         },
       ]
     : [];
-    const mixingEngineerFeePrice = orderData.hasMixingEngineerFee ? resolveMixingEngineerFee(listing) : null;
-    const mixingEngineerFee = mixingEngineerFeePrice
-      ? [
-          {
-            code: 'line-item/mixing-engineer',
-            unitPrice: mixingEngineerFeePrice,
-            quantity: quantity,
-            includeFor: ['customer', 'provider'],
-          },
-        ]
-      : [];
-    const composerFeePrice = orderData.hasComposerFee ? resolveComposerFee(listing) : null;
-    const composerFee = composerFeePrice
-      ? [
-          {
-            code: 'line-item/composer',
-            unitPrice: composerFeePrice,
-            quantity: quantity,
-            includeFor: ['customer', 'provider'],
-          },
-        ]
-      : [];
-      const producerFeePrice = orderData.hasProducerFee ? resolveProducerFee(listing) : null;
-      const producerFee = producerFeePrice
-        ? [
-            {
-              code: 'line-item/producer',
-              unitPrice: producerFeePrice,
-              quantity: quantity,
-              includeFor: ['customer', 'provider'],
-            },
-          ]
-        : [];
+  const mixingEngineerFeePrice = orderData.hasMixingEngineerFee ? resolveMixingEngineerFee(listing) : null;
+  const mixingEngineerFee = mixingEngineerFeePrice
+    ? [
+        {
+          code: 'line-item/mixing-engineer',
+          unitPrice: mixingEngineerFeePrice,
+          quantity: quantity,
+          includeFor: ['customer', 'provider'],
+        },
+      ]
+    : [];
+  const composerFeePrice = orderData.hasComposerFee ? resolveComposerFee(listing) : null;
+  const composerFee = composerFeePrice
+    ? [
+        {
+          code: 'line-item/composer',
+          unitPrice: composerFeePrice,
+          quantity: quantity,
+          includeFor: ['customer', 'provider'],
+        },
+      ]
+    : [];
+  const producerFeePrice = orderData.hasProducerFee ? resolveProducerFee(listing) : null;
+  const producerFee = producerFeePrice
+    ? [
+        {
+          code: 'line-item/producer',
+          unitPrice: producerFeePrice,
+          quantity: quantity,
+          includeFor: ['customer', 'provider'],
+        },
+      ]
+    : [];
   // Throw error if there is no quantity information given
   if (!quantity) {
     const message = `Error: transition should contain quantity information: 
@@ -247,6 +254,24 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
     return -1 * percentage;
   };
 
+  const discountCode = resolveDiscountCode(orderData, unitPrice);
+  const discountCodeLineItem = discountCode
+    ? [
+        {
+          code: 'line-item/discount-code-(10%)',
+          unitPrice: calculateTotalFromLineItems([
+            order,
+            ...soundEngineerFee,
+            ...mixingEngineerFee,
+            ...composerFee,
+            ...producerFee,
+          ]),
+          percentage: getNegation(10),
+          includeFor: ['customer'],
+        },
+      ]
+    : [];
+
   // Note: extraLineItems for product selling (aka shipping fee)
   // is not included in either customer or provider commission calculation.
 
@@ -257,7 +282,13 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
     ? [
         {
           code: 'line-item/provider-commission',
-          unitPrice: calculateTotalFromLineItems([order, ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee]),
+          unitPrice: calculateTotalFromLineItems([
+            order,
+            ...soundEngineerFee,
+            ...mixingEngineerFee,
+            ...composerFee,
+            ...producerFee,
+          ]),
           percentage: getNegation(providerCommission.percentage),
           includeFor: ['provider'],
         },
@@ -283,7 +314,11 @@ const getDateRangeQuantityAndLineItems = (orderData, code) => {
   const lineItems = [
     order,
     ...extraLineItems,
-    ...soundEngineerFee, ...mixingEngineerFee, ...composerFee, ...producerFee,
+    ...soundEngineerFee,
+    ...mixingEngineerFee,
+    ...composerFee,
+    ...producerFee,
+    ...discountCodeLineItem,
     ...providerCommissionMaybe,
     ...customerCommissionMaybe,
   ];
