@@ -9,7 +9,15 @@ import { timestampToDate } from '../../../util/dates';
 import { propTypes } from '../../../util/types';
 import { BOOKING_PROCESS_NAME } from '../../../transactions/transaction';
 
-import { Form, H6, PrimaryButton, FieldCheckbox } from '../../../components';
+import {
+  Form,
+  H6,
+  PrimaryButton,
+  FieldCheckbox,
+  FieldTextInput,
+  SecondaryButton,
+  Button,
+} from '../../../components';
 import { formatMoney } from '../../../util/currency';
 import { types as sdkTypes } from '../../../util/sdkLoader';
 import EstimatedCustomerBreakdownMaybe from '../EstimatedCustomerBreakdownMaybe';
@@ -18,12 +26,23 @@ import FieldDateAndTimeInput from './FieldDateAndTimeInput';
 import css from './BookingTimeForm.module.css';
 const { Money } = sdkTypes;
 
+// If you made it here, you deserve these discount codes you sneaky.
+const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10'];
+
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      discountCode: '',
+      isCodeValid: false,
+      isCodeLocked: false,
+      validationMessage: '',
+    };
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleOnChange = this.handleOnChange.bind(this);
+    this.verifyDiscountCode = this.verifyDiscountCode.bind(this);
+    this.removeDiscount = this.removeDiscount.bind(this);
+    this.handleDiscountCodeChange = this.handleDiscountCodeChange.bind(this);
   }
 
   handleFormSubmit(e) {
@@ -34,6 +53,57 @@ export class BookingTimeFormComponent extends Component {
   // lineItems from this template's backend for the EstimatedTransactionMaybe
   // In case you add more fields to the form, make sure you add
   // the values here to the orderData object.
+  handleDiscountCodeChange(event) {
+    const { value } = event.target;
+    this.setState({ discountCode: value });
+  }
+  
+  verifyDiscountCode = () => {
+    const { discountCode } = this.state;
+    const isValid = VALID_DISCOUNT_CODES.includes(discountCode.toUpperCase());
+  
+    this.setState(
+      {
+        isCodeValid: isValid,
+        isCodeLocked: isValid,
+        validationMessage: isValid
+          ? this.props.intl.formatMessage({ id: 'BookingTimeForm.validDiscountCode' })
+          : this.props.intl.formatMessage({ id: 'BookingTimeForm.invalidDiscountCode' }),
+      },
+      () => {
+        if (isValid && this.formApi) {
+          this.formApi.change('discountCode', discountCode);
+          this.handleOnChange({
+            values: { ...this.formApi.getState().values, discountCode, hasDiscountCode: true },
+          });
+        }
+      }
+    );
+  };
+
+  removeDiscount = () => {
+    this.setState(
+      {
+        discountCode: '',
+        isCodeValid: false,
+        isCodeLocked: false,
+        validationMessage: '',
+      },
+      () => {
+        if (this.formApi) {
+          this.formApi.change('discountCode', '');
+          this.handleOnChange({
+            values: {
+              ...this.formApi.getState().values,
+              discountCode: '',
+              hasDiscountCode: false,
+            },
+          });
+        }
+      }
+    );
+  };
+
   handleOnChange(formValues) {
     const { bookingStartTime, bookingEndTime } = formValues.values;
     const startDate = bookingStartTime ? timestampToDate(bookingStartTime) : null;
@@ -45,6 +115,9 @@ export class BookingTimeFormComponent extends Component {
     // Note: we expect values bookingStartTime and bookingEndTime to be strings
     // which is the default case when the value has been selected through the form
     const isStartBeforeEnd = bookingStartTime < bookingEndTime;
+
+    const discountCode = formValues.values.discountCode;
+    const hasDiscountCode = this.state.isCodeValid;
 
     const hasSoundEngineerFee = formValues.values?.soundEngineerFee?.length > 0;
     const hasMixingEngineerFee = formValues.values?.mixingEngineerFee?.length > 0;
@@ -60,6 +133,8 @@ export class BookingTimeFormComponent extends Component {
         orderData: {
           bookingStart: startDate,
           bookingEnd: endDate,
+          discountCode,
+          hasDiscountCode,
           hasSoundEngineerFee,
           hasMixingEngineerFee,
           hasComposerFee,
@@ -116,7 +191,10 @@ export class BookingTimeFormComponent extends Component {
           const endTime = values && values.bookingEndTime ? values.bookingEndTime : null;
           const startDate = startTime ? timestampToDate(startTime) : null;
           const endDate = endTime ? timestampToDate(endTime) : null;
-
+          const areDatesSelected = (startDate, endDate) => {
+            return startDate && endDate;
+          };
+          this.formApi = form;
           // This is the place to collect breakdown estimation data. See the
           // EstimatedCustomerBreakdownMaybe component to change the calculations
           // for customized payment processes.
@@ -237,7 +315,7 @@ export class BookingTimeFormComponent extends Component {
                 <div className={css.feeDiv}>{composerMaybe}</div>
                 <div className={css.feeDiv}>{producerMaybe}</div>
               </div>
-              
+
               {showEstimatedBreakdown ? (
                 <div className={css.priceBreakdownContainer}>
                   <H6 as="h3" className={css.bookingBreakdownTitle}>
@@ -251,6 +329,56 @@ export class BookingTimeFormComponent extends Component {
                     currency={unitPrice.currency}
                     marketplaceName={marketplaceName}
                     processName={BOOKING_PROCESS_NAME}
+                  />
+
+                  {areDatesSelected(startDate, endDate) && (
+                    <>
+                      <label>
+                        {' '}
+                        <FormattedMessage id="BookingTimeForm.discountCodeLabel" />
+                      </label>
+
+                      <div className={css.discountCodeContainer}>
+                        <input
+                          type="text"
+                          value={this.state.discountCode}
+                          onChange={this.handleDiscountCodeChange}
+                          disabled={this.state.isCodeLocked}
+                          placeholder={intl.formatMessage({
+                            id: 'BookingTimeForm.discountCodePlaceholder',
+                          })}
+                        />
+                        {!this.state.isCodeLocked ? (
+                          <Button
+                            className={css.verifyButton}
+                            type="button"
+                            onClick={this.verifyDiscountCode}
+                          >
+                            <FormattedMessage id="BookingTimeForm.verifyCode" />
+                          </Button>
+                        ) : (
+                          <Button
+                            className={css.removeButton}
+                            type="button"
+                            onClick={this.removeDiscount}
+                          >
+                            <FormattedMessage id="BookingTimeForm.removeDiscount" />
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {areDatesSelected(startDate, endDate) && this.state.validationMessage && (
+                    <p className={this.state.isCodeValid ? css.validCode : css.invalidCode}>
+                      {this.state.validationMessage}
+                    </p>
+                  )}
+
+                  <input
+                    type="hidden"
+                    name="discountCode"
+                    value={this.state.isCodeValid ? this.state.discountCode : ''}
                   />
                 </div>
               ) : null}

@@ -28,6 +28,7 @@ import LineItemTotalPrice from './LineItemTotalPrice';
 import LineItemUnknownItemsMaybe from './LineItemUnknownItemsMaybe';
 
 import css from './OrderBreakdown.module.css';
+import LineItemCustomerDiscountMaybe from './LineItemCustomerDiscountMaybe';
 
 export const OrderBreakdownComponent = props => {
   const {
@@ -119,6 +120,7 @@ export const OrderBreakdownComponent = props => {
         intl={intl}
         marketplaceCurrency={currency}
       />
+      <LineItemCustomerDiscountMaybe lineItems={lineItems} intl={intl} marketplaceCurrency={currency} />
       <LineItemRefundMaybe lineItems={lineItems} intl={intl} marketplaceCurrency={currency} />
 
       <LineItemCustomerCommissionMaybe

@@ -13,7 +13,7 @@ import React from 'react';
 import { intlShape } from '../../util/reactIntl';
 import { formatMoney } from '../../util/currency';
 import { humanizeLineItemCode } from '../../util/data';
-import { LINE_ITEMS, propTypes } from '../../util/types';
+import { LINE_ITEMS, LINE_ITEM_DISCOUNT_COMMISSION, propTypes } from '../../util/types';
 
 import css from './OrderBreakdown.module.css';
 
@@ -22,14 +22,15 @@ const LineItemUnknownItemsMaybe = props => {
 
   // resolve unknown non-reversal line items
   const allItems = lineItems.filter(item => LINE_ITEMS.indexOf(item.code) === -1 && !item.reversal);
-
   const items = isProvider
     ? allItems.filter(item => item.includeFor.includes('provider'))
     : allItems.filter(item => item.includeFor.includes('customer'));
-
-  return items.length > 0 ? (
+  const nonDiscountLineItems = items.filter(
+    item => item.code !== LINE_ITEM_DISCOUNT_COMMISSION
+  );
+  return nonDiscountLineItems.length > 0 ? (
     <React.Fragment>
-      {items.map((item, i) => {
+      {nonDiscountLineItems.map((item, i) => {
         const quantity = item.quantity;
 
         const label =
