@@ -134,7 +134,8 @@ module.exports = (reportUri, reportOnly) => {
     'dailymix-images.scdn.co',
     'static.intercomassets.com',
     '*.intercomcdn.com',
-    'stuviassets.s3.amazonaws.com'
+    'stuviassets.s3.amazonaws.com',
+    'analytics.tiktok.com',
   );
 
   const { scriptSrc = [self] } = defaultDirectives;
@@ -145,6 +146,7 @@ module.exports = (reportUri, reportOnly) => {
     'accounts.spotify.com',
     'widget.intercom.io',
     '*.intercomcdn.com',
+    'analytics.tiktok.com',
   );
 
   const { frameSrc = [self] } = defaultDirectives;
@@ -153,7 +155,7 @@ module.exports = (reportUri, reportOnly) => {
     'www.facebook.com',
     'open.spotify.com',
     'accounts.spotify.com',
-    'intercom-sheets.com'
+    'intercom-sheets.com',
   );
 
   const { connectSrc = [self] } = defaultDirectives;
@@ -166,7 +168,8 @@ module.exports = (reportUri, reportOnly) => {
     'api-iam.intercom.io',
     'wss://*.intercom.io',
     '*.intercomcdn.com',
-    'stuviassets.s3.amazonaws.com'
+    'stuviassets.s3.amazonaws.com',
+    'analytics.tiktok.com',
   );
 
   const customDirectives = {
