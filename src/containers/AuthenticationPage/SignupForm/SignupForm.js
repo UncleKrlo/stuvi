@@ -204,7 +204,7 @@ const SignupFormComponent = props => (
             </div>
           ) : null}
 
-          {showCustomUserFields ? (
+          {/* {showCustomUserFields ? (
             <div className={css.customFields}>
               {userFieldProps.map(fieldProps => {
                 if (fieldProps.key === 'pub_birthday') {
@@ -234,7 +234,7 @@ const SignupFormComponent = props => (
                 );
               })}
             </div>
-          ) : null}
+          ) : null} */}
 
           <div className={css.bottomWrapper}>
             {termsAndConditions}

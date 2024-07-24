@@ -454,7 +454,7 @@ class ProfileSettingsFormComponent extends Component {
                 </p>
               </div>
               <div className={classNames(css.sectionContainer)}>
-                {userFieldProps?.map(fieldProps => {
+                {/* {userFieldProps?.map(fieldProps => {
                   if (fieldProps.key === 'pub_birthday') {
                     return (
                       <Field
@@ -479,7 +479,7 @@ class ProfileSettingsFormComponent extends Component {
                   return (
                     <CustomExtendedDataField key={fieldProps.key} {...fieldProps} formId={formId} />
                   );
-                })}
+                })} */}
                 <FieldTextInput
                   type="text"
                   id="spotifyLink"
