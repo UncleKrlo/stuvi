@@ -70,7 +70,7 @@
     color: #444;
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     .accordionContainer {
       padding: 15px;
     }

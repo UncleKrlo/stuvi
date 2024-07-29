@@ -7,6 +7,11 @@
 .feeContainer{
   margin-top: 25px;
 }
+@media (max-width: 767px) {
+  .feeContainer{
+    margin-left: 25px;
+  }
+}
 .feeDiv{
   margin-bottom: 15px;
 }
