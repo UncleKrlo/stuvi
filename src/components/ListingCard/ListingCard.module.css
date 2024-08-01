@@ -51,6 +51,7 @@
   /* Font */
   composes: textSmall from global;
   font-weight: var(--fontWeightSemiBold);
+  font-size: 20px;
 
   /* Remove default margins from font */
   margin-top: 0;
