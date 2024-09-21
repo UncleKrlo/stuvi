@@ -271,7 +271,7 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
           flex-direction: column;
         }
       }
-      @media (max-width: 580px) {
+      @media (max-width: 598px) {
         .responsive-text {
           margin-top: 2.2rem !important;
           font-size: 3.5rem !important;
