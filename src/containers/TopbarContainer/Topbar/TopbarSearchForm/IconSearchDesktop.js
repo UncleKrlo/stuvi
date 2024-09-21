@@ -2,11 +2,12 @@ import React from 'react';
 
 import css from './TopbarSearchForm.module.css';
 
-const IconSearchDesktop = () => (
+const IconSearchDesktop = ({ style, color, width, height }) => (
   <svg
     className={css.iconSvg}
-    width="21"
-    height="22"
+    style={{ ...style }}
+    width={width ? width : "21"}
+    height={height ? height : "22"}
     viewBox="0 0 21 22"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -18,6 +19,7 @@ const IconSearchDesktop = () => (
       fillRule="evenodd"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={{ stroke: color }}
     >
       <path d="M13 14l5.241 5.241" />
       <circle cx="7.5" cy="7.5" r="7.5" />

@@ -64,15 +64,20 @@ const groupMeasuredLinks = (links, containerWidth, menuMoreWidth) => {
 };
 
 const calculateContainerWidth = (containerRefTarget, parentWidth) => {
+  if (!containerRefTarget || !containerRefTarget.parentNode) {
+    console.warn('containerRefTarget o su parentNode es null');
+    return 0;
+  }
+
   // Siblings include logo, search form, (inbox, profile menu || login signup)
   const siblingArray = Array.from(containerRefTarget.parentNode.childNodes).filter(
     n => n !== containerRefTarget
   );
-  const siblingWidthsCombined = siblingArray.reduce((acc, node) => acc + node.offsetWidth, 0);
+  const siblingWidthsCombined = siblingArray.reduce((acc, node) => acc + (node.offsetWidth || 0), 0);
 
   // .root class of the TopbarDesktop has 24px padding on the right
   // Firefox doesn't support computedStyleMap()
-  const parentStyleMap = containerRefTarget.parentElement.computedStyleMap
+  const parentStyleMap = containerRefTarget.parentElement?.computedStyleMap
     ? containerRefTarget.parentElement.computedStyleMap()
     : null;
   const topbarPaddingRight = parentStyleMap?.get('padding-right')?.value;
@@ -118,10 +123,16 @@ const CustomLinksMenu = ({ currentPage, customLinks = [], hasClientSideContentRe
 
   useEffect(() => {
     let animationFrameId = null;
+    let observerInstance = null;
+
     if (hasClientSideContentReady && moreLabelWidth > 0) {
-      // ResizeObserver sets layout data: grouped priority links and links that go to menuLinks dropdown
-      observer.current = new ResizeObserver(entries => {
-        const containerRefParentWidth = containerRef.current?.parentNode?.offsetWidth;
+      observerInstance = new ResizeObserver(entries => {
+        if (!containerRef.current) {
+          console.warn('containerRef.current es null');
+          return;
+        }
+
+        const containerRefParentWidth = containerRef.current.parentNode?.offsetWidth;
         const bodyOffsetWidth = document.body.offsetWidth;
 
         for (const entry of entries) {
@@ -132,7 +143,11 @@ const CustomLinksMenu = ({ currentPage, customLinks = [], hasClientSideContentRe
             !isBodyTheTarget && containerRefParentWidth !== bodyOffsetWidth;
 
           if (isBodyTheTarget || hasWidthOfTopbarDesktopChanged) {
-            const target = containerRef?.current;
+            const target = containerRef.current;
+            if (!target) {
+              console.warn('containerRef.current es null dentro del loop');
+              return;
+            }
             const availableContainerWidth = calculateContainerWidth(target, bodyOffsetWidth);
 
             // The groupedLinks variable contains { priorityLinks, menuLinks }
@@ -148,18 +163,15 @@ const CustomLinksMenu = ({ currentPage, customLinks = [], hasClientSideContentRe
       });
 
       if (containerRef?.current) {
-        // We need to observe both document body and the component's own container
-        // When the window is squeezed, priority links prevent the container to shrink smaller.
-        // At that point, we need to calculate the width from the width of the body.
-        // It's also possible that some of the other elements get a repaint after window-level repaint (e.g. image loads)
-        // In those cases, we just need to
-        observer.current.observe(document.body);
-        observer.current.observe(containerRef.current);
+        observerInstance.observe(document.body);
+        observerInstance.observe(containerRef.current);
       }
     }
+
     return () => {
-      observer.current?.unobserve(document.body);
-      observer.current?.unobserve(containerRef.current);
+      if (observerInstance) {
+        observerInstance.disconnect();
+      }
       if (animationFrameId) {
         window.cancelAnimationFrame(animationFrameId);
       }
