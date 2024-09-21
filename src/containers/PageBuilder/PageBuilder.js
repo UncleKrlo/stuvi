@@ -113,15 +113,33 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
       return match ? match[1].split(',').map(option => option.trim()) : [];
     };
 
-    const typeOptions = ['Recording', 'Production', 'Rehearsal', 'Mixing', 'Mastering'];
+    const typeOptions = ['Recording', 'Production', 'Rehearsal', 'Mixing', 'Mastering', 'Live Sound'];
     const areaOptions = ['Miami', 'Boston'];
     const priceOptions = ['$0-$30', '$31-$70', '$70+'];
     const gearOptions = ['Microphone', 'Acoustic Piano', 'Synthesizer', 'Electric Piano', 'Electric Guitar', 'Acoustic Guitar', 'Drumset', 'Electric Bass', 'Modular Synth'];
+    const micOptions = ['Shure', 'Røde', 'AKG', 'Audio Technica', 'Aston', 'Neumann', 'Universal Audio', 'Sennheiser', 'Lewitt', 'Telefunken', 'Golden Age', 'Warm Audio', 'Lauten Audio', 'Manley'];
 
+    const micBrandToId = {
+      'Shure': 'SHURE',
+      'Røde': 'Rode',
+      'AKG': 'AKG',
+      'Audio Technica': 'AudioTechnica',
+      'Aston': 'Aston',
+      'Neumann': 'Neumann',
+      'Universal Audio': 'Universal_Audio',
+      'Sennheiser': 'Sennheiser',
+      'Lewitt': 'Lewitt',
+      'Telefunken': 'Telefunken',
+      'Golden Age': 'Golden_Age',
+      'Warm Audio': 'Warm_Audio_Mic',
+      'Lauten Audio': 'Lauten_Audio',
+      'Manley': 'Manley'
+    };    
     const [studioType, setStudioType] = useState(typeOptions[0]);
     const [location, setLocation] = useState(areaOptions[0]);
     const [cost, setCost] = useState(priceOptions[0]);
     const [equipment, setEquipment] = useState(gearOptions[0]);
+    const [micBrand, setMicBrand] = useState(micOptions[0]);
 
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -144,6 +162,8 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
         studioTypeParam = 'pub_StudioType=has_all%3AMixing_Mastering';
       } else if (studioType === 'Mastering') {
         studioTypeParam = 'pub_StudioType=has_all%3AMixing_Mastering';
+      } else if (studioType === 'Live Sound') {
+        studioTypeParam = 'pub_StudioType=has_all%3ALiveSound';
       }
 
       let priceParam = '';
@@ -157,7 +177,8 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
 
       let equipmentParam = '';
       if (equipment === 'Microphone') {
-        equipmentParam = 'pub_Mics=has_all%3ASHURE';
+        const micId = micBrandToId[micBrand];
+        equipmentParam = `pub_Mics=has_all%3A${micId}`;
       } else {
         equipmentParam = `pub_Instruments=has_all%3A${equipment.replace(' ', '_')}`;
       }
@@ -180,7 +201,8 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '1rem',
-      color: '#F5F5F5',
+      color: '#1345CA',
+      // backgroundColor: '#1345CA',
       minHeight: '92vh',
     };
 
@@ -216,8 +238,12 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
       padding: '0.2rem',
       margin: '0.35rem 0.5rem',
       textAlign: 'center',
-      width: '130px',
+      width: '140px',
       appearance: 'none',
+    };
+
+    const textStyle = {
+      color: '#F5F5F5',
     };
 
     const [isHovered, setIsHovered] = useState(false);
@@ -277,7 +303,7 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
         <h1 className="responsive-text" style={titleStyle}>Music Studio Finder</h1>
         <p className="description-text" style={descriptionStyle}>Because we all know how hard it is to find a good studio these days.</p>
         <form onSubmit={handleSubmit} className="studio-finder-form" style={formStyle}>
-          <span>I'm looking for a</span>
+          <span style={textStyle}>I'm looking for a</span>
           <select
             value={studioType}
             onChange={(e) => setStudioType(e.target.value)}
@@ -288,7 +314,7 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
             ))}
           </select>
 
-          <span>music studio around</span>
+          <span style={textStyle}>studio around</span>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -299,7 +325,7 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
             ))}
           </select>
 
-          <span>that costs</span>
+          <span style={textStyle}>that costs {cost === '$70+' ? '' : 'between'}</span>
           <select
             value={cost}
             onChange={(e) => setCost(e.target.value)}
@@ -310,7 +336,7 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
             ))}
           </select>
 
-          <span>per hour and has a</span>
+          <span style={textStyle}>per hour and has a</span>
           <select
             value={equipment}
             onChange={(e) => setEquipment(e.target.value)}
@@ -320,6 +346,21 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
               <option key={i} value={option}>{option}</option>
             ))}
           </select>
+
+          {equipment === 'Microphone' && (
+            <>
+              <span style={textStyle}>from</span>
+              <select
+                value={micBrand}
+                onChange={(e) => setMicBrand(e.target.value)}
+                style={selectStyle}
+              >
+                {micOptions.map((option, i) => (
+                  <option key={i} value={option}>{option}</option>
+                ))}
+              </select>
+            </>
+          )}
         </form>
         <button onClick={handleSubmit} style={buttonStyle}
         onMouseEnter={() => setIsHovered(true)} 
@@ -388,9 +429,10 @@ const PageBuilder = props => {
                   <FaqSectionBuilder sections={sections} options={options} />
                 ) : isMusicStudioFinderPage ? (
                   <>
-                    <MusicStudioFinderBuilder sections={sections} options={options} />
-                    <video
+                  <video
                       src="https://stuviassets.s3.amazonaws.com/gradient-video.mp4"
+                      // poster={require('../../assets/gradient-image.png').default}
+                      // poster="https://stuviassets.s3.amazonaws.com/gradient-image.png"
                       style={{
                         position: 'fixed',
                         top: 0,
@@ -400,11 +442,13 @@ const PageBuilder = props => {
                         zIndex: -1,
                         objectFit: 'cover'
                       }}
+                      preload="auto"
                       autoPlay
                       loop
                       playsInline
                       muted
                     />
+                    <MusicStudioFinderBuilder sections={sections} options={options} />
                   </>
                 ) : (
                   <SectionBuilder sections={sections} options={options} />
