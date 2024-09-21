@@ -202,8 +202,11 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
       justifyContent: 'center',
       padding: '1rem',
       color: '#1345CA',
-      // backgroundColor: '#1345CA',
-      minHeight: '92vh',
+      background: 'linear-gradient(135deg, #1345CA 0%, #0B0D17 100%)',
+      // backgroundImage: 'url(https://stuviassets.s3.amazonaws.com/gradient-image.png)',
+      // backgroundSize: 'cover',
+      // backgroundPosition: 'center', 
+      minHeight: '87vh',
     };
 
     const titleStyle = {
@@ -235,11 +238,16 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
       fontSize: '1.1rem',
       borderBottom: '2px solid #F5F5F5',
       cursor: 'pointer',
-      padding: '0.2rem',
+      padding: '0.6rem',
       margin: '0.35rem 0.5rem',
       textAlign: 'center',
+      textIndent: '0.01px',
       width: '140px',
       appearance: 'none',
+      // backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23F5F5F5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+      // backgroundRepeat: 'no-repeat',
+      // backgroundPosition: 'right 0.5rem center',
+      // backgroundSize: '16px',
     };
 
     const textStyle = {
@@ -268,7 +276,12 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
     const responsiveStyle = `
       @media (max-width: 425px) {
         .studio-finder-form {
-          flex-direction: column;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .studio-finder-form > * {
+          flex: 1 1 45%; /* Ajusta el ancho de los elementos a aproximadamente dos columnas */
+          margin: 0.5rem; /* Espaciado entre columnas */
         }
       }
       @media (max-width: 598px) {
@@ -429,7 +442,7 @@ const PageBuilder = props => {
                   <FaqSectionBuilder sections={sections} options={options} />
                 ) : isMusicStudioFinderPage ? (
                   <>
-                  <video
+                  {/* <video
                       src="https://stuviassets.s3.amazonaws.com/gradient-video.mp4"
                       // poster={require('../../assets/gradient-image.png').default}
                       // poster="https://stuviassets.s3.amazonaws.com/gradient-image.png"
@@ -447,7 +460,7 @@ const PageBuilder = props => {
                       loop
                       playsInline
                       muted
-                    />
+                    /> */}
                     <MusicStudioFinderBuilder sections={sections} options={options} />
                   </>
                 ) : (
