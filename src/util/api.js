@@ -7,7 +7,7 @@ import { types as sdkTypes, transit } from './sdkLoader';
 import Decimal from 'decimal.js';
 
 export const apiBaseUrl = marketplaceRootURL => {
-  const port = process.env.REACT_APP_DEV_API_SERVER_PORT;
+  const port = process.env.REACT_APP_DEV_API_SERVER_PORT || 4000;
   const useDevApiServer = process.env.NODE_ENV === 'development' && !!port;
 
   // In development, the dev API server is running in a different port
@@ -143,4 +143,14 @@ export const transitionPrivileged = body => {
 // be sent in the body.
 export const createUserWithIdp = body => {
   return post('/api/auth/create-user-with-idp', body);
+};
+
+export const awsOperations = {
+  getPresignedUrl: body => post('/api/aws-operations', body),
+  deleteImage: imageUrl => 
+    request('/api/aws-operations', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl })
+    })
 };

@@ -4,7 +4,9 @@
    between client and node server.
 */
 
+const dotenv = require('dotenv');
 const fs = require('fs');
+const path = require('path');
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -15,24 +17,18 @@ if (!NODE_ENV) {
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 var dotenvFiles = [
   `.env.${NODE_ENV}.local`,
-  // Don't include `.env.local` for `test` environment
-  // since normally you expect tests to produce the same
-  // results for everyone
   NODE_ENV !== 'test' && `.env.local`,
   `.env.${NODE_ENV}`,
   '.env',
+  '.env.server'
 ].filter(Boolean);
 
 const configureEnv = () => {
-  // Load environment variables from .env* files. Suppress warnings using silent
-  // if this file is missing. dotenv will never modify any environment variables
-  // that have already been set.
-  // https://github.com/motdotla/dotenv
   dotenvFiles.forEach(dotenvFile => {
     if (fs.existsSync(dotenvFile)) {
-      console.log('Loading env from file:' + dotenvFile);
+      console.log('Loading env from file:', dotenvFile);
       require('dotenv-expand')(
-        require('dotenv').config({
+        dotenv.config({
           path: dotenvFile,
         })
       );

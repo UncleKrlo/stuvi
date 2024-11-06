@@ -27,7 +27,7 @@ import css from './BookingTimeForm.module.css';
 const { Money } = sdkTypes;
 
 // If you made it here, you deserve these discount codes you sneaky.
-const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC'];
+const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC', 'STUVIBLACK10'];
 
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
