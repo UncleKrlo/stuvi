@@ -1,65 +1,44 @@
-import AWS from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
-
-// Configura AWS S3
-AWS.config.update({
-  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.REACT_APP_AWS_SH_ACCESS_KEY,
-  region: 'us-east-1',
-});
-
-const s3 = new AWS.S3();
+import { awsOperations } from '../../../util/api';
 
 export const uploadImageToS3 = async file => {
-  const params = {
-    Bucket: 'profilegallery',
-    Key: `${Date.now()}-${file.name}`,
-    Body: file,
-    ACL: 'public-read',
-    ContentType: file.type,
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.upload(params, (err, data) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(data.Location);
+  try {
+    // Obtener URL prefirmada del servidor
+    const { presignedUrl, finalUrl } = await awsOperations.getPresignedUrl({ 
+      filename: file.name,
+      contentType: file.type 
     });
-  });
+
+    // Subir directamente a S3 usando la URL prefirmada
+    const uploadResponse = await fetch(presignedUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    if (!uploadResponse.ok) {
+      console.error('Error response:', await uploadResponse.text());
+      throw new Error('Error uploading to S3');
+    }
+
+    // Retornar la URL final del archivo
+    return finalUrl;
+  } catch (error) {
+    console.error('Error en la subida:', error);
+    throw error;
+  }
 };
-// export const uploadImageToS3 = async (file) => {
-//   const fileExtension = file.name.split('.').pop();
-//   const fileName = `${uuidv4()}.${fileExtension}`;
-//   const params = {
-//     Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
-//     Key: fileName,
-//     Body: file
-//   };
-//   console.log('Uploading with params:', params);
-//   try {
-//     const data = await s3.upload(params).promise();
-//     return data.Location;
-//   } catch (error) {
-//     console.error('Error uploading image:', error);
-//     throw error;
-//   }
-// };
+
 export const deleteImageFromS3 = async imageUrl => {
-  const urlParts = imageUrl.split('/');
-  const key = urlParts[urlParts.length - 1];
-
-  const params = {
-    Bucket: 'profilegallery',
-    Key: key,
-  };
-
-  return new Promise((resolve, reject) => {
-    s3.deleteObject(params, (err, data) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(data);
-    });
-  });
+  try {
+    const response = await awsOperations.deleteImage(imageUrl);
+    if (!response.success) {
+      throw new Error('Error deleting from S3');
+    }
+    return response;
+  } catch (error) {
+    console.error('Error en la eliminación:', error);
+    throw error;
+  }
 };
