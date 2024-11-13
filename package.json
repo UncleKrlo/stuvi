@@ -71,6 +71,9 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.20",
+    "@babel/plugin-transform-runtime": "^7.22.15",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -80,7 +83,9 @@
     "cross-env": "^7.0.3",
     "inquirer": "^8.2.4",
     "nodemon": "^3.1.4",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "to-fast-properties": "^4.0.0",
+    "babel-preset-react-app": "^10.0.1"
   },
   "resolutions": {
     "moment": "^2.30.1"
