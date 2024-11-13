@@ -14,6 +14,242 @@ way to update this template, but currently, we follow a pattern:
 
 ## Upcoming version 2024-XX-XX
 
+- [fix] ConfirmSignupForm: show spinner. (Handling for confirmInProgress state was missing.)
+  [#504](https://github.com/sharetribe/web-template/pull/504)
+- [fix] Topbar: if multiple custom links has the same text, the virtual DOM is confused.
+  [#502](https://github.com/sharetribe/web-template/pull/502)
+- [fix] PaymentMethodsPage: full page load did not fetch defaultPaymentMethod.
+  [#500](https://github.com/sharetribe/web-template/pull/500)
+- [change] Relax the Referrer-Policy to "origin".
+  [#498](https://github.com/sharetribe/web-template/pull/498)
+- [fix] Open discard modal on ManageListingsPage only if scrolling is disabled. Fixes an issue where
+  opening the discard draft modal on mobile scrolled the page to the very bottom.
+  [#497](https://github.com/sharetribe/web-template/pull/497)
+
+## [v6.1.0] 2024-11-06
+
+- [add] Add currently available translations for DE, ES, FR.
+  [#495](https://github.com/sharetribe/web-template/pull/495)
+- [add] Add support for discarding draft listings on ManageListingsPage
+  [474](https://github.com/sharetribe/web-template/pull/474)
+- [fix] ManageListingCard: Menu has a regression bug on mobile layout. Note: if Menu component needs
+  to use full screenwidth on mobile, add preferScreenWidthOnMobile.
+  [#494](https://github.com/sharetribe/web-template/pull/494)
+- [change] Refactor SingleDatePicker and DateRangePicker by combining date and its formatting. It
+  updates dateData if passed-in input value changes.
+  [#492](https://github.com/sharetribe/web-template/pull/492)
+
+  [v6.1.0]: https://github.com/sharetribe/web-template/compare/v6.0.1...v6.1.0
+
+## [v6.0.1] 2024-11-01
+
+- [fix] GA4 integration had a copy-paste bug.
+  [#489](https://github.com/sharetribe/web-template/pull/489)
+- [fix] FieldDateTimeInput.module.css: fix typo.
+  [#487](https://github.com/sharetribe/web-template/pull/487)
+- [change] Update default email templates to use ICU's `j` pattern for datetimes.
+  [#478](https://github.com/sharetribe/web-template/pull/478)
+- [change] Update default email templates to get link and button colors from asset.
+  [#478](https://github.com/sharetribe/web-template/pull/478)
+
+  [v6.0.1]: https://github.com/sharetribe/web-template/compare/v6.0.0...v6.0.1
+
+## [v6.0.0] 2024-10-29
+
+This major release takes the React v17.0.2 into use.
+
+The biggest change is taking a new DatePicker into use and removing the outdated datepicker library:
+React Dates. The change was necessary as the React Dates still uses deprecated React life cycle
+functions componentWillReceiveProps & componentWillUpdate.
+
+Another notable change with the React v17 was with the callback functions of useEffect hook, which
+became asynchronous. You should to check other v17 changes from v17 changelog to verify if your
+customizations are affected somehow.
+
+The last highlight is that we started to use nonce for script-src on Content Security Policy.
+
+- [change] This updates Sharetribe Web Template to use React v17.0.2.
+
+  Some highlights:
+
+  - The callback functions of **_useEffect_ hook** has become asynchronous!
+  - There has been changes to event delegation on React component tree.
+
+    - https://legacy.reactjs.org/blog/2020/10/20/react-v17.html#changes-to-event-delegation
+    - This change didn't seem to have practical consequences on this repository.
+
+  [#477](https://github.com/sharetribe/web-template/pull/477)
+
+- [add] CSP: start using nonce with script-src. This also removes data from script-src.
+  [#485](https://github.com/sharetribe/web-template/pull/485)
+- [add] Remove React Dates datepicker library and add a new built-in DatePicker.
+
+  There are 3 new datepicker fields to be used with React Final Forms:
+
+  - FieldDateRangePicker
+  - FieldSingleDatePicker
+  - FieldDateRangeController
+
+  This swap is done because componentWillReceiveProps & componentWillUpdate functions, which are
+  used by the outdated React Dates library, are deprecated and removed from future React versions.
+
+  [#453](https://github.com/sharetribe/web-template/pull/453)
+
+- [fix] UserCard: make the styles of contact link consistent with the other links.
+  [#484](https://github.com/sharetribe/web-template/pull/484)
+- [fix] CheckoutPage.duck.js: fix minor typo with handleSuccess function.
+  [#483](https://github.com/sharetribe/web-template/pull/483)
+- [add] Filter out bot requests that scan websites for vulnerabilities before they reach React app.
+  [#479](https://github.com/sharetribe/web-template/pull/479)
+- [change] Update copy text for Publishing listing permission to Posting listing.
+  [#482](https://github.com/sharetribe/web-template/pull/482)
+
+  [v6.0.0]: https://github.com/sharetribe/web-template/compare/v5.8.0...v6.0.0
+
+## [v5.8.0] 2024-10-22
+
+- [add] Add currently available translations for DE, ES, FR.
+  [#475](https://github.com/sharetribe/web-template/pull/475)
+- [add] Block images can be wrapped in a link if a link is configured via assets.
+  [#464](https://github.com/sharetribe/web-template/pull/464)
+- [add] Add support for aligning content blocks based on asset
+  [#469](https://github.com/sharetribe/web-template/pull/469)
+- [add] Update moment-timezone library to v0.5.46.
+  [#472](https://github.com/sharetribe/web-template/pull/472)
+- [add] Update caniuselite, which is used by browserlist.
+  [#471](https://github.com/sharetribe/web-template/pull/471)
+- [add] Add support for the youtubeVideoUrl schema type: listingPage and profilePage can now display
+  an embedded Youtube video [#467](https://github.com/sharetribe/web-template/pull/467)
+- [add] Add currently available translations for DE, ES, FR.
+  [#466](https://github.com/sharetribe/web-template/pull/466)
+
+  [v5.8.0]: https://github.com/sharetribe/web-template/compare/v5.7.0...v5.8.0
+
+## [v5.7.0] 2024-10-08
+
+- [add] Access control: Viewing rights.
+
+  When a user's viewing rights have been revoked:
+
+  - SearchPage redirects to NoAccessPage
+  - ListingPage redirects to NoAccessPage unless the user is viewing their own listing. Reviews are
+    not displayed.
+  - ProfilePage redirects to NoAccessPage unless the user is viewing their own profile. Reviews are
+    not displayed.
+  - TransactionPage does not show the OrderPanel for transactions at the inquiry state of booking or
+    purchase processes.
+
+  [#459](https://github.com/sharetribe/web-template/pull/459)
+
+  [v5.7.0]: https://github.com/sharetribe/web-template/compare/v5.6.1...v5.7.0
+
+## [v5.6.1] 2024-10-07
+
+- [fix] Updated JSON asset schema structure from Console: Removed the enabled field, now using only
+  the type attribute for CTA status.
+- [add] Add currently available translations for DE, ES, FR.
+  [#461](https://github.com/sharetribe/web-template/pull/461)
+
+  [v5.6.1]: https://github.com/sharetribe/web-template/compare/v5.6.0...v5.6.1
+
+## [v5.6.0] 2024-10-01
+
+- [add] Add support for CTAs on NoAccessPage
+  [#455](https://github.com/sharetribe/web-template/pull/455)
+- [add] Add currently available translations for DE, ES, FR.
+  [#458](https://github.com/sharetribe/web-template/pull/458)
+- [fix] Topbar: malformed custom link causes a 500 error on server.
+  [#457](https://github.com/sharetribe/web-template/pull/457)
+- [fix] ListingPage.shared.js: import for convertMoneyToNumber was not made for priceForSchemaMaybe
+  function. [#456](https://github.com/sharetribe/web-template/pull/456)
+- [add] Access control: Transaction rights
+
+  - When a user does not have the "initiateTransactions" permission in their
+    `effectivePermissionSet` relationship and they try to initiate an order or send an inquiry, they
+    are redirected to the NoAccessPage.
+
+  [#450](https://github.com/sharetribe/web-template/pull/450)
+
+- [fix] InquiryForm: test code was committed earlier.
+  [#452](https://github.com/sharetribe/web-template/pull/452)
+- [fix] EmailVerification: enforce that currentUser is fetched after verification.
+  [#451](https://github.com/sharetribe/web-template/pull/451)
+- [fix] ListingPage: fix 0 as value of listing fields.
+  [#449](https://github.com/sharetribe/web-template/pull/449)
+- [fix] EditListingDetailsPanel: fix 0 as value of listing fields.
+  [#448](https://github.com/sharetribe/web-template/pull/448)
+- [fix] Currencies that the Stripe does not support should not cause 500 errors.
+  [#447](https://github.com/sharetribe/web-template/pull/447)
+
+  [v5.6.0]: https://github.com/sharetribe/web-template/compare/v5.5.0...v5.6.0
+
+## [v5.5.0] 2024-09-03
+
+- [add] Add currently available translations for DE, ES, FR.
+  [#445](https://github.com/sharetribe/web-template/pull/445)
+- [change] Make the propType blockId optional for all Block types.
+  [#444](https://github.com/sharetribe/web-template/pull/444)
+- [change] Update Sentry (v6.19.7 -> v8.26.0). Add ignoreErrors setup, add CSP directives and avoid
+  some errors. [#441](https://github.com/sharetribe/web-template/pull/441)
+- [fix] ListingPage: the optional chaining for processType variable was faulty.
+  [#443](https://github.com/sharetribe/web-template/pull/443)
+- [change] Updates to the configuration script. Marketplace name is now prompted in the mandatory
+  settings. [#440](https://github.com/sharetribe/web-template/pull/440)
+- [change] Update one copy text. [#439](https://github.com/sharetribe/web-template/pull/439)
+
+  [v5.5.0]: https://github.com/sharetribe/web-template/compare/v5.4.0...v5.5.0
+
+## [v5.4.0] 2024-08-20
+
+- [change] auth.duck.js: login flow should wait for currentUser entity be loaded.
+  [#436](https://github.com/sharetribe/web-template/pull/436)
+- [add] Access control: private marketplace mode
+
+  - Fetch a new asset: /general/access-control.json to check private: true/false flag
+  - Make SearchPage, ListingPage, ProfilePage, Styleguide require authentication
+  - Ensure currentUser entity is loaded before loadData on client-side
+  - Restrict data load & add redirections for SearchPage, ListingPage, and ProfilePage
+
+  [#434](https://github.com/sharetribe/web-template/pull/434)
+
+- [add] Access control: 'pending-approval' state for users.
+
+  - Users will get "state", which is exposed through currentUser's attribute
+  - A new state is "pending-approval", which restricts user from initiating transactions and posting
+    listings.
+  - In addition, 'banned' users will also have state 'banned'.
+  - Extra: Routes.js: do not allow banned users to auth pages
+  - [fix]: InboxPage.duck.js: include deleted and banned attributes
+  - [fix]: ModalMissingInformation: only 'active' users get this modal shown
+  - [fix]: Inquiry modal: open the modal after authentication
+  - Some util-file imports have been reordered (might cause conflicts)
+
+  [#428](https://github.com/sharetribe/web-template/pull/428)
+
+- [fix] SearchPage: SearchFiltersMobile (modal) should be above topbar.
+  [#432](https://github.com/sharetribe/web-template/pull/432)
+
+  [v5.4.0]: https://github.com/sharetribe/web-template/compare/v5.3.0...v5.4.0
+
+## [v5.3.0] 2024-08-13
+
+- [change] ProfilePage: redirect Stripe's crawler to landing page (profile page might be empty).
+  [#430](https://github.com/sharetribe/web-template/pull/430)
+- [add] Add currently available translations for DE, ES, FR.
+  [#429](https://github.com/sharetribe/web-template/pull/429)
+- [add] Handle API's new permission model & permission to post listings
+
+  - CurrentUser fetch includes a new relationship: effectivePermissionSet
+  - There is a new Page component: NoAccessPage
+  - If user has no posting rights: they can't create or edit a draft listing and they can't open a
+    previously closed published listing. Instead, they are redirected to NoAccessPage
+
+  [#426](https://github.com/sharetribe/web-template/pull/426)
+
+- [fix] Routes.js: reTry can be undefined in some cases (reTry.scrollIntoView)
+  [#427](https://github.com/sharetribe/web-template/pull/427)
+- [change] ProfilePage: remove withViewport and refactor a bit.
+  [#424](https://github.com/sharetribe/web-template/pull/424)
 - [change] Update express.js (v4.19.2) and nodemon (3.1.4).
   [#421](https://github.com/sharetribe/web-template/pull/421)
 - [add] richText.js: support parentheses on autolinked URLs.
@@ -23,6 +259,8 @@ way to update this template, but currently, we follow a pattern:
 - [fix] There could be rare time-windows when indexing has not caught up with deleted & closed
   listings. This might result those listings to be included to listing queries.
   [#417](https://github.com/sharetribe/web-template/pull/417)
+
+  [v5.3.0]: https://github.com/sharetribe/web-template/compare/v5.2.1...v5.3.0
 
 ## [v5.2.1] 2024-07-02
 

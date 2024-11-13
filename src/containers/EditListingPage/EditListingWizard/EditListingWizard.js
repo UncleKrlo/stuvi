@@ -642,7 +642,7 @@ class EditListingWizard extends Component {
                   disabled={formDisabled}
                   inProgress={payoutDetailsSaveInProgress}
                   ready={payoutDetailsSaved}
-                  currentUser={ensuredCurrentUser}
+                  currentUser={currentUser}
                   stripeBankAccountLastDigits={getBankAccountLast4Digits(stripeAccountData)}
                   savedCountry={savedCountry}
                   submitButtonText={intl.formatMessage({
@@ -653,7 +653,6 @@ class EditListingWizard extends Component {
                   stripeAccountLinkError={stripeAccountLinkError}
                   onChange={onPayoutDetailsChange}
                   onSubmit={rest.onPayoutDetailsSubmit}
-                  onGetStripeConnectAccountLink={handleGetStripeConnectAccountLink}
                   stripeConnected={stripeConnected}
                 >
                   {stripeConnected && !returnedAbnormallyFromStripe && showVerificationNeeded ? (

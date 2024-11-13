@@ -143,9 +143,7 @@ class ProfileSettingsFormComponent extends Component {
   }
 
   onGalleryImageUpload = async (formApi, values, file) => {
-    console.log('trying to upload');
     try {
-      // TODO: set loader
       this.setState({ loadingPhoto: true });
       const imageUrl = await uploadImageToS3(file);
       this.setState({ loadingPhoto: false });
@@ -163,6 +161,7 @@ class ProfileSettingsFormComponent extends Component {
       const currentProfileGallery = values.profileGallery || [];
       const updatedProfileGallery = currentProfileGallery.filter((_, i) => i !== index);
       formApi.change('profileGallery', updatedProfileGallery);
+      
       // Espera a que se actualice el estado del formulario
       await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -521,9 +520,9 @@ class ProfileSettingsFormComponent extends Component {
                                 <button
                                   type="button"
                                   className={css.removeImage}
-                                  onClick={() =>
-                                    this.onGalleryImageRemove(form, index, input.value, values)
-                                  }
+                                  onClick={() => {
+                                    this.onGalleryImageRemove(form, index, input.value, values);
+                                  }}
                                 >
                                   <FormattedMessage id="ProfileSettingsForm.removeImage" />
                                 </button>

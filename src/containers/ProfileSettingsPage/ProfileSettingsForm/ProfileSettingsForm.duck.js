@@ -2,13 +2,11 @@ import { awsOperations } from '../../../util/api';
 
 export const uploadImageToS3 = async file => {
   try {
-    // Obtener URL prefirmada del servidor
     const { presignedUrl, finalUrl } = await awsOperations.getPresignedUrl({ 
       filename: file.name,
       contentType: file.type 
     });
 
-    // Subir directamente a S3 usando la URL prefirmada
     const uploadResponse = await fetch(presignedUrl, {
       method: 'PUT',
       body: file,
@@ -18,27 +16,41 @@ export const uploadImageToS3 = async file => {
     });
 
     if (!uploadResponse.ok) {
-      console.error('Error response:', await uploadResponse.text());
       throw new Error('Error uploading to S3');
     }
 
-    // Retornar la URL final del archivo
     return finalUrl;
   } catch (error) {
-    console.error('Error en la subida:', error);
     throw error;
   }
 };
 
 export const deleteImageFromS3 = async imageUrl => {
   try {
-    const response = await awsOperations.deleteImage(imageUrl);
-    if (!response.success) {
+    const baseUrl = process.env.NODE_ENV === 'development' 
+      ? `http://localhost:${process.env.REACT_APP_DEV_API_SERVER_PORT || 4000}`
+      : '';
+    
+    const response = await fetch(`${baseUrl}/api/aws-operations`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageUrl }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete image: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
       throw new Error('Error deleting from S3');
     }
-    return response;
+    
+    return data;
   } catch (error) {
-    console.error('Error en la eliminación:', error);
     throw error;
   }
 };

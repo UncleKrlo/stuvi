@@ -33,6 +33,7 @@ const BlockDefault = props => {
     media,
     responsiveImageSizes,
     options,
+    alignment,
   } = props;
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
@@ -69,6 +70,14 @@ const BlockDefault = props => {
       window.location.href = href;
     }
   };
+
+  const alignmentClasses = {
+    left: css.alignLeft,
+    center: css.alignCenter,
+    right: css.alignRight,
+  };
+
+  const alignmentClass = alignmentClasses[alignment];
 
   return (
     <BlockContainer id={blockId} className={classes}>
@@ -128,7 +137,7 @@ const BlockDefault = props => {
           )}
           {hasTextComponentFields && (
             <div
-              className={classNames(textClassName, css.text, {
+              className={classNames(textClassName, alignmentClass, css.text, {
                 [css.artistSectionText]: isArtistSection,
               })}
 
@@ -215,7 +224,7 @@ BlockDefault.defaultProps = {
 };
 
 BlockDefault.propTypes = {
-  blockId: string.isRequired,
+  blockId: string,
   className: string,
   rootClassName: string,
   mediaClassName: string,
