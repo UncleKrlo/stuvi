@@ -8,6 +8,12 @@ import BlockContainer from '../BlockContainer';
 import css from './BlockDefault.module.css';
 import { Link } from 'react-router-dom';
 
+const isWebView = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /(webview|wv|googlewebview)/i.test(userAgent) ||
+         (/(iphone|ipod|ipad).*applewebkit(?!.*safari)/i.test(userAgent)) ||
+         (/android.*(wv|\.0\.0\.0)/i.test(userAgent));
+};
 
 const FieldMedia = props => {
   const { className, media, sizes, options } = props;
@@ -45,6 +51,7 @@ const BlockDefault = props => {
   const isJoinSection = blockId && blockId.includes('joinus');
 
   const [isOldSafari, setIsOldSafari] = useState(false);
+  const [isWebViewBrowser, setIsWebViewBrowser] = useState(false);
 
   useEffect(() => {
     function getSafariVersion() {
@@ -62,6 +69,8 @@ const BlockDefault = props => {
     if (safariVersion && safariVersion < 17.3) {
       setIsOldSafari(true);
     }
+
+    setIsWebViewBrowser(isWebView());
   }, []);
 
   const handleCardClick = href => {
@@ -169,7 +178,7 @@ const BlockDefault = props => {
               ) : isArtistSection ? (
                 <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
               ) 
-              : (isLandingSection || isJoinSection) && !isOldSafari ? (
+              : (isLandingSection || isJoinSection) && !isOldSafari && !isWebViewBrowser ? (
                 <div
                   className={
                     isJoinSection
