@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { useHistory } from 'react-router-dom';
 import css from './MagazineDisplay.module.css';
 import { openDB } from 'idb';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Cache key para el PDF
 const CACHE_KEY = 'magazine-pdf-cache';

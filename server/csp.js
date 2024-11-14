@@ -204,6 +204,28 @@ exports.csp = (reportUri, reportOnly) => {
     frameSrc: frameSrcOverride,
     connectSrc: connectSrcOverride,
     mediaSrc: [self, 'stuviassets.s3.amazonaws.com', '*.s3.amazonaws.com'],
+    scriptSrc: scriptSrcOverride.concat(
+      'cdnjs.cloudflare.com',
+      'unpkg.com'
+    ),
+    
+    connectSrc: connectSrcOverride.concat(
+      'cdnjs.cloudflare.com',
+      'unpkg.com'
+    ),
+
+    workerSrc: [
+      self,
+      blob,
+      'cdnjs.cloudflare.com',
+      'unpkg.com'
+    ],
+
+    objectSrc: [
+      self,
+      'stuviassets.s3.amazonaws.com',
+      '*.s3.amazonaws.com'
+    ],
   };
 
   // ================ END CUSTOM CSP URLs ================ //
