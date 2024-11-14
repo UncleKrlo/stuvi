@@ -198,34 +198,39 @@ exports.csp = (reportUri, reportOnly) => {
   );
 
   const customDirectives = {
-    // Example: Add custom directive override
     imgSrc: imgSrcOverride,
-    scriptSrc: scriptSrcOverride,
-    frameSrc: frameSrcOverride,
-    connectSrc: connectSrcOverride,
-    mediaSrc: [self, 'stuviassets.s3.amazonaws.com', '*.s3.amazonaws.com'],
     scriptSrc: scriptSrcOverride.concat(
       'cdnjs.cloudflare.com',
-      'unpkg.com'
+      'unpkg.com',
+      unsafeInline
     ),
-    
+    frameSrc: frameSrcOverride,
     connectSrc: connectSrcOverride.concat(
       'cdnjs.cloudflare.com',
-      'unpkg.com'
+      'unpkg.com',
+      'https://stuviassets.s3.us-east-1.amazonaws.com'
     ),
-
+    mediaSrc: [self, 'stuviassets.s3.amazonaws.com', '*.s3.amazonaws.com'],
     workerSrc: [
       self,
       blob,
       'cdnjs.cloudflare.com',
-      'unpkg.com'
+      'unpkg.com',
+      unsafeInline
     ],
-
     objectSrc: [
       self,
       'stuviassets.s3.amazonaws.com',
       '*.s3.amazonaws.com'
     ],
+    defaultSrc: [
+      self,
+      'stuviassets.s3.amazonaws.com',
+      '*.s3.amazonaws.com',
+      'cdnjs.cloudflare.com',
+      'unpkg.com',
+      blob
+    ]
   };
 
   // ================ END CUSTOM CSP URLs ================ //
