@@ -40,7 +40,7 @@
     "passport-google-oauth": "^2.0.0",
     "patch-package": "^8.0.0",
     "path-to-regexp": "^6.2.1",
-    "pdfjs-dist": "2.16.105",
+    "pdfjs-dist": "2.12.313",
     "postinstall-postinstall": "^2.1.0",
     "prop-types": "^15.8.1",
     "query-string": "^7.1.1",

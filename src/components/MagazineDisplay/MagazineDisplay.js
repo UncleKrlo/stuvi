@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { useHistory } from 'react-router-dom';
 import css from './MagazineDisplay.module.css';
 import { openDB } from 'idb';
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // Cache key para el PDF
 const CACHE_KEY = 'magazine-pdf-cache';
@@ -235,9 +234,9 @@ const MagazineDisplay = ({ pdfUrl, cacheKey }) => {
 
   // Añadir opciones para el PDF
   const pdfOptions = {
-    cMapUrl: 'https://unpkg.com/pdfjs-dist@2.16.105/cmaps/',
+    cMapUrl: `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/cmaps/`,
     cMapPacked: true,
-    standardFontDataUrl: 'https://unpkg.com/pdfjs-dist@2.16.105/standard_fonts/'
+    standardFontDataUrl: `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/standard_fonts/`
   };
 
   return (
