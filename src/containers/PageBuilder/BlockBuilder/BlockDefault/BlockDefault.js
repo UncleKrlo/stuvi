@@ -52,6 +52,7 @@ const BlockDefault = props => {
 
   const [isOldSafari, setIsOldSafari] = useState(false);
   const [isWebViewBrowser, setIsWebViewBrowser] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     function getSafariVersion() {
@@ -71,6 +72,21 @@ const BlockDefault = props => {
     }
 
     setIsWebViewBrowser(isWebView());
+
+    const checkIfMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) ||
+             window.innerWidth <= 768;
+    };
+
+    setIsMobile(checkIfMobile());
+
+    const handleResize = () => {
+      setIsMobile(checkIfMobile());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleCardClick = href => {
@@ -178,7 +194,7 @@ const BlockDefault = props => {
               ) : isArtistSection ? (
                 <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
               ) 
-              : (isLandingSection || isJoinSection) && !isOldSafari && !isWebViewBrowser ? (
+              : (isLandingSection || isJoinSection) && !isMobile ? (
                 <div
                   className={
                     isJoinSection
