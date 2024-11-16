@@ -27,16 +27,27 @@ const initDB = async () => {
 export const DEFAULT_PDF_URL = "https://stuviassets.s3.us-east-1.amazonaws.com/Stuvi+Magazine+Digital.pdf";
 export const DEFAULT_CACHE_KEY = 'magazine-pdf-cache';
 
+const getStoredPage = () => {
+  if (typeof window !== 'undefined') {
+    return parseInt(localStorage.getItem(STORAGE_KEY)) || 1;
+  }
+  return 1;
+};
+
+const getStoredScale = () => {
+  if (typeof window !== 'undefined') {
+    const storedScale = localStorage.getItem(SCALE_STORAGE_KEY);
+    if (storedScale) return parseFloat(storedScale);
+    return window.innerWidth <= 768 ? 0.5 : 0.7;
+  }
+  return 0.7;
+};
+
 const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KEY }) => {
   const history = useHistory();
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [scale, setScale] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth <= 768 ? 0.5 : 0.7;
-    }
-    return 0.7;
-  });
+  const [pageNumber, setPageNumber] = useState(getStoredPage);
+  const [scale, setScale] = useState(getStoredScale);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState(null);
@@ -44,13 +55,6 @@ const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KE
   const [isReallyLoaded, setIsReallyLoaded] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [pdfSource, setPdfSource] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedPage = parseInt(localStorage.getItem(STORAGE_KEY)) || 1;
-      setPageNumber(savedPage);
-    }
-  }, []);
 
   useEffect(() => {
     const loadPdf = async () => {
@@ -173,7 +177,9 @@ const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KE
   function zoomIn() {
     setScale(prevScale => {
       const newScale = Math.min(2, prevScale + 0.1);
-      localStorage.setItem(SCALE_STORAGE_KEY, newScale.toString());
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SCALE_STORAGE_KEY, newScale.toString());
+      }
       return newScale;
     });
   }
@@ -181,7 +187,9 @@ const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KE
   function zoomOut() {
     setScale(prevScale => {
       const newScale = Math.max(0.3, prevScale - 0.1);
-      localStorage.setItem(SCALE_STORAGE_KEY, newScale.toString());
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SCALE_STORAGE_KEY, newScale.toString());
+      }
       return newScale;
     });
   }
