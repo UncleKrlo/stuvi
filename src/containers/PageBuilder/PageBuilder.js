@@ -10,7 +10,7 @@ import { validProps } from './Field';
 import SectionBuilder from './SectionBuilder/SectionBuilder.js';
 import StaticPage from './StaticPage.js';
 import Accordion from '../../components/Accordion/Accordion.js';
-import MagazineDisplay from '../../components/MagazineDisplay/MagazineDisplay.js';
+import MagazineDisplay, { DEFAULT_CACHE_KEY, DEFAULT_PDF_URL } from '../../components/MagazineDisplay/MagazineDisplay.js';
 
 import css from './PageBuilder.module.css';
 import IconSearchDesktop from '../../containers/TopbarContainer/Topbar/TopbarSearchForm/IconSearchDesktop.js';
@@ -389,9 +389,6 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
   return <>{musicStudioFinderSections}</>;
 };
 
-const CACHE_KEY = 'magazine-pdf-cache';
-const PDF_URL = "https://stuviassets.s3.us-east-1.amazonaws.com/Stuvi+Magazine+Digital.pdf";
-
 const PageBuilder = props => {
   const {
     pageAssetsData,
@@ -434,13 +431,13 @@ const PageBuilder = props => {
 
   useEffect(() => {
     if (isMagazinesPage) {
-      // Precargar el PDF
-      caches.open(CACHE_KEY).then(cache => {
-        cache.match(PDF_URL).then(response => {
+      // Usar las constantes desde MagazineDisplay
+      caches.open(DEFAULT_CACHE_KEY).then(cache => {
+        cache.match(DEFAULT_PDF_URL).then(response => {
           if (!response) {
-            fetch(PDF_URL)
+            fetch(DEFAULT_PDF_URL)
               .then(response => {
-                cache.put(PDF_URL, response.clone());
+                cache.put(DEFAULT_PDF_URL, response.clone());
               })
               .catch(error => console.warn('Failed to preload PDF:', error));
           }
@@ -472,10 +469,7 @@ const PageBuilder = props => {
                 ) : isMusicStudioFinderPage ? (
                   <MusicStudioFinderBuilder sections={sections} options={options} />
                 ) : isMagazinePage ? (
-                  <MagazineDisplay 
-                    pdfUrl={PDF_URL}
-                    cacheKey={CACHE_KEY}
-                  />
+                  <MagazineDisplay />
                 ) : (
                   <SectionBuilder sections={sections} options={options} />
                 )}

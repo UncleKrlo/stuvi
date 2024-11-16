@@ -24,7 +24,10 @@ const initDB = async () => {
   });
 };
 
-const MagazineDisplay = ({ pdfUrl, cacheKey }) => {
+export const DEFAULT_PDF_URL = "https://stuviassets.s3.us-east-1.amazonaws.com/Stuvi+Magazine+Digital.pdf";
+export const DEFAULT_CACHE_KEY = 'magazine-pdf-cache';
+
+const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KEY }) => {
   const history = useHistory();
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(() => {
