@@ -30,19 +30,27 @@ export const DEFAULT_CACHE_KEY = 'magazine-pdf-cache';
 const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KEY }) => {
   const history = useHistory();
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(() => {
-    return parseInt(localStorage.getItem(STORAGE_KEY)) || 1;
-  });
-  const [scale] = useState(() => {
-    return window.innerWidth <= 768 ? 0.5 : 0.7;
+  const [pageNumber, setPageNumber] = useState(1);
+  const [scale, setScale] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 768 ? 0.5 : 0.7;
+    }
+    return 0.7;
   });
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState(null);
-  const isMobile = window.innerWidth <= 768;
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
   const [isReallyLoaded, setIsReallyLoaded] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [pdfSource, setPdfSource] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPage = parseInt(localStorage.getItem(STORAGE_KEY)) || 1;
+      setPageNumber(savedPage);
+    }
+  }, []);
 
   useEffect(() => {
     const loadPdf = async () => {
@@ -88,14 +96,16 @@ const MagazineDisplay = ({ pdfUrl = DEFAULT_PDF_URL, cacheKey = DEFAULT_CACHE_KE
     }
   }, [isReallyLoaded]);
 
-  // Guardar la página actual cuando cambie
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, pageNumber.toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, pageNumber.toString());
+    }
   }, [pageNumber]);
 
-  // Guardar el scale cuando cambie
   useEffect(() => {
-    localStorage.setItem(SCALE_STORAGE_KEY, scale.toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(SCALE_STORAGE_KEY, scale.toString());
+    }
   }, [scale]);
 
   function onDocumentLoadSuccess({ numPages }) {
