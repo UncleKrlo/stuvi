@@ -27,7 +27,7 @@ import css from './BookingTimeForm.module.css';
 const { Money } = sdkTypes;
 
 // If you made it here, you deserve these discount codes you sneaky.
-const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC', 'STUVIBLACK10'];
+const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC', 'STUVIBLACK10', 'WILMER'];
 
 // Mover handleFetchLineItems fuera del componente como una función pura
 const handleFetchLineItems = props => formValues => {
