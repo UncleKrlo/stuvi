@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { IconSpinner, LayoutComposer } from '../../components/index.js';
@@ -10,6 +10,7 @@ import { validProps } from './Field';
 import SectionBuilder from './SectionBuilder/SectionBuilder.js';
 import StaticPage from './StaticPage.js';
 import Accordion from '../../components/Accordion/Accordion.js';
+import MagazineDisplay, { DEFAULT_CACHE_KEY, DEFAULT_PDF_URL } from '../../components/MagazineDisplay/MagazineDisplay.js';
 
 import css from './PageBuilder.module.css';
 import IconSearchDesktop from '../../containers/TopbarContainer/Topbar/TopbarSearchForm/IconSearchDesktop.js';
@@ -420,6 +421,31 @@ const PageBuilder = props => {
     section.sectionName && section.sectionName.includes('Music Studio Finder')
   );
 
+  const isMagazinePage = pageAssetsData?.sections?.some(section =>
+    section.sectionName && section.sectionName.includes('Vol. 1')
+  );
+
+  const isMagazinesPage = pageAssetsData?.sections?.some(section =>
+    section.sectionName && section.sectionName.includes('Magazines.')
+  );
+
+  useEffect(() => {
+    if (isMagazinesPage) {
+      // Usar las constantes desde MagazineDisplay
+      caches.open(DEFAULT_CACHE_KEY).then(cache => {
+        cache.match(DEFAULT_PDF_URL).then(response => {
+          if (!response) {
+            fetch(DEFAULT_PDF_URL)
+              .then(response => {
+                cache.put(DEFAULT_PDF_URL, response.clone());
+              })
+              .catch(error => console.warn('Failed to preload PDF:', error));
+          }
+        });
+      });
+    }
+  }, [isMagazinesPage]);
+
   const layoutAreas = `
     topbar
     main
@@ -441,28 +467,9 @@ const PageBuilder = props => {
                 ) : isFaqPage ? (
                   <FaqSectionBuilder sections={sections} options={options} />
                 ) : isMusicStudioFinderPage ? (
-                  <>
-                  {/* <video
-                      src="https://stuviassets.s3.amazonaws.com/gradient-video.mp4"
-                      // poster={require('../../assets/gradient-image.png').default}
-                      // poster="https://stuviassets.s3.amazonaws.com/gradient-image.png"
-                      style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        zIndex: -1,
-                        objectFit: 'cover'
-                      }}
-                      preload="auto"
-                      autoPlay
-                      loop
-                      playsInline
-                      muted
-                    /> */}
-                    <MusicStudioFinderBuilder sections={sections} options={options} />
-                  </>
+                  <MusicStudioFinderBuilder sections={sections} options={options} />
+                ) : isMagazinePage ? (
+                  <MagazineDisplay />
                 ) : (
                   <SectionBuilder sections={sections} options={options} />
                 )}

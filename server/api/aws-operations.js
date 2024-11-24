@@ -1,6 +1,5 @@
 const AWS = require('aws-sdk');
 
-// Asegúrate de que estas variables estén definidas en el servidor
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -33,14 +32,8 @@ module.exports = async (req, res) => {
         Expires: 3600,
       };
 
-      console.log('Getting presigned URL with params:', params);
-
       const presignedUrl = await s3.getSignedUrlPromise('putObject', params);
-      
-      // Construye la URL final que tendrá el archivo
       const finalUrl = `https://profilegallery.s3.amazonaws.com/${fileName}`;
-      
-      console.log('Generated URLs:', { presignedUrl, finalUrl });
 
       return res.json({ 
         presignedUrl,
@@ -48,8 +41,11 @@ module.exports = async (req, res) => {
       });
     }
     
-    // Para eliminaciones (DELETE)
     if (req.method === 'DELETE') {
+      if (!req.body || !req.body.imageUrl) {
+        return res.status(400).json({ error: 'imageUrl is required in request body' });
+      }
+
       const urlParts = req.body.imageUrl.split('/');
       const key = urlParts[urlParts.length - 1];
       
@@ -63,7 +59,6 @@ module.exports = async (req, res) => {
 
     res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
-    console.error('AWS operation error:', error);
     res.status(500).json({ error: error.message });
   }
 }; 

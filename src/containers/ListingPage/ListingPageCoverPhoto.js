@@ -17,8 +17,15 @@ import {
   LISTING_PAGE_PARAM_TYPE_DRAFT,
   LISTING_PAGE_PARAM_TYPE_EDIT,
   createSlug,
+  NO_ACCESS_PAGE_USER_PENDING_APPROVAL,
+  NO_ACCESS_PAGE_VIEW_LISTINGS,
 } from '../../util/urlHelpers';
-import { convertMoneyToNumber } from '../../util/currency';
+import {
+  isErrorNoViewingPermission,
+  isErrorUserPendingApproval,
+  isForbiddenError,
+} from '../../util/errors.js';
+import { hasPermissionToViewData, isUserAuthorized } from '../../util/userHelpers.js';
 import {
   ensureListing,
   ensureOwnListing,
@@ -67,6 +74,7 @@ import {
   handleContactUser,
   handleSubmitInquiry,
   handleSubmit,
+  priceForSchemaMaybe,
 } from './ListingPage.shared';
 import SectionHero from './SectionHero';
 import SectionTextMaybe from './SectionTextMaybe';
@@ -114,6 +122,7 @@ export const ListingPageComponent = props => {
     onInitializeCardPaymentData,
     config,
     routeConfiguration,
+    showOwnListingsOnly,
   } = props;
 
   const listingConfig = config.listing;
@@ -121,7 +130,7 @@ export const ListingPageComponent = props => {
   const isPendingApprovalVariant = rawParams.variant === LISTING_PAGE_PENDING_APPROVAL_VARIANT;
   const isDraftVariant = rawParams.variant === LISTING_PAGE_DRAFT_VARIANT;
   const currentListing =
-    isPendingApprovalVariant || isDraftVariant
+    isPendingApprovalVariant || isDraftVariant || showOwnListingsOnly
       ? ensureOwnListing(getOwnListing(listingId))
       : ensureListing(getListing(listingId));
 
@@ -199,7 +208,7 @@ export const ListingPageComponent = props => {
   const processName = resolveLatestProcessName(transactionProcessAlias.split('/')[0]);
   const isBooking = isBookingProcess(processName);
   const isPurchase = isPurchaseProcess(processName);
-  const processType = isBooking ? ('booking' ? isPurchase : 'purchase') : 'inquiry';
+  const processType = isBooking ? 'booking' : isPurchase ? 'purchase' : 'inquiry';
 
   const currentAuthor = authorAvailable ? currentListing.author : null;
   const ensuredAuthor = ensureUser(currentAuthor);
@@ -269,15 +278,6 @@ export const ListingPageComponent = props => {
   // Read more about product schema
   // https://developers.google.com/search/docs/advanced/structured-data/product
   const productURL = `${config.marketplaceRootURL}${location.pathname}${location.search}${location.hash}`;
-  const schemaPriceMaybe = price
-    ? {
-        price: intl.formatNumber(convertMoneyToNumber(price), {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }),
-        priceCurrency: price.currency,
-      }
-    : {};
   const currentStock = currentListing.currentStock?.attributes?.quantity || 0;
   const schemaAvailability = !currentListing.currentStock
     ? null
@@ -311,7 +311,7 @@ export const ListingPageComponent = props => {
         offers: {
           '@type': 'Offer',
           url: productURL,
-          ...schemaPriceMaybe,
+          ...priceForSchemaMaybe(price, intl),
           ...availabilityMaybe,
         },
       }}
@@ -321,6 +321,7 @@ export const ListingPageComponent = props => {
           title={title}
           listing={currentListing}
           isOwnListing={isOwnListing}
+          currentUser={currentUser}
           editParams={{
             id: listingId.uuid,
             slug: listingSlug,
@@ -488,6 +489,45 @@ const EnhancedListingPage = props => {
   const history = useHistory();
   const location = useLocation();
 
+  const showListingError = props.showListingError;
+  const isVariant = props.params?.variant?.length > 0;
+  const currentUser = props.currentUser;
+  if (isForbiddenError(showListingError) && !isVariant && !currentUser) {
+    // This can happen if private marketplace mode is active
+    return (
+      <NamedRedirect
+        name="SignupPage"
+        state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+      />
+    );
+  }
+
+  const isPrivateMarketplace = config.accessControl.marketplace.private === true;
+  const isUnauthorizedUser = currentUser && !isUserAuthorized(currentUser);
+  const hasNoViewingRights = currentUser && !hasPermissionToViewData(currentUser);
+  const hasUserPendingApprovalError = isErrorUserPendingApproval(showListingError);
+
+  if ((isPrivateMarketplace && isUnauthorizedUser) || hasUserPendingApprovalError) {
+    return (
+      <NamedRedirect
+        name="NoAccessPage"
+        params={{ missingAccessRight: NO_ACCESS_PAGE_USER_PENDING_APPROVAL }}
+      />
+    );
+  } else if (
+    (hasNoViewingRights && isForbiddenError(showListingError)) ||
+    isErrorNoViewingPermission(showListingError)
+  ) {
+    // If the user has no viewing rights, fetching anything but their own listings
+    // will return a 403 error. If that happens, redirect to NoAccessPage.
+    return (
+      <NamedRedirect
+        name="NoAccessPage"
+        params={{ missingAccessRight: NO_ACCESS_PAGE_VIEW_LISTINGS }}
+      />
+    );
+  }
+
   return (
     <ListingPageComponent
       config={config}
@@ -495,6 +535,7 @@ const EnhancedListingPage = props => {
       intl={intl}
       history={history}
       location={location}
+      showOwnListingsOnly={hasNoViewingRights}
       {...props}
     />
   );

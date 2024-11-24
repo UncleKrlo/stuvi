@@ -27,7 +27,42 @@ import css from './BookingTimeForm.module.css';
 const { Money } = sdkTypes;
 
 // If you made it here, you deserve these discount codes you sneaky.
-const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC', 'STUVIBLACK10'];
+const VALID_DISCOUNT_CODES = ['ELHUESO', 'STUVI10', 'STUV10', 'MAKE.MUSIC', 'STUVIBLACK10', 'WILMER'];
+
+// Mover handleFetchLineItems fuera del componente como una función pura
+const handleFetchLineItems = props => formValues => {
+  const { listingId, isOwnListing, fetchLineItemsInProgress, onFetchTransactionLineItems } = props;
+  const { bookingStartTime, bookingEndTime } = formValues.values;
+  const startDate = bookingStartTime ? timestampToDate(bookingStartTime) : null;
+  const endDate = bookingEndTime ? timestampToDate(bookingEndTime) : null;
+
+  const isStartBeforeEnd = bookingStartTime < bookingEndTime;
+
+  const discountCode = formValues.values.discountCode;
+  const hasDiscountCode = props.isCodeValid;
+
+  const hasSoundEngineerFee = formValues.values?.soundEngineerFee?.length > 0;
+  const hasMixingEngineerFee = formValues.values?.mixingEngineerFee?.length > 0;
+  const hasComposerFee = formValues.values?.composerFee?.length > 0;
+  const hasProducerFee = formValues.values?.producerFee?.length > 0;
+
+  if (bookingStartTime && bookingEndTime && isStartBeforeEnd && !fetchLineItemsInProgress) {
+    onFetchTransactionLineItems({
+      orderData: {
+        bookingStart: startDate,
+        bookingEnd: endDate,
+        discountCode,
+        hasDiscountCode,
+        hasSoundEngineerFee,
+        hasMixingEngineerFee,
+        hasComposerFee,
+        hasProducerFee,
+      },
+      listingId,
+      isOwnListing,
+    });
+  }
+};
 
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
@@ -38,8 +73,8 @@ export class BookingTimeFormComponent extends Component {
       isCodeLocked: false,
       validationMessage: '',
     };
+    this.formApi = null;
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.handleOnChange = this.handleOnChange.bind(this);
     this.verifyDiscountCode = this.verifyDiscountCode.bind(this);
     this.removeDiscount = this.removeDiscount.bind(this);
     this.handleDiscountCodeChange = this.handleDiscountCodeChange.bind(this);
@@ -49,15 +84,11 @@ export class BookingTimeFormComponent extends Component {
     this.props.onSubmit(e);
   }
 
-  // When the values of the form are updated we need to fetch
-  // lineItems from this template's backend for the EstimatedTransactionMaybe
-  // In case you add more fields to the form, make sure you add
-  // the values here to the orderData object.
   handleDiscountCodeChange(event) {
     const { value } = event.target;
     this.setState({ discountCode: value });
   }
-  
+
   verifyDiscountCode = () => {
     const { discountCode } = this.state;
     const isValid = VALID_DISCOUNT_CODES.includes(discountCode.toUpperCase());
@@ -73,8 +104,15 @@ export class BookingTimeFormComponent extends Component {
       () => {
         if (isValid && this.formApi) {
           this.formApi.change('discountCode', discountCode);
-          this.handleOnChange({
-            values: { ...this.formApi.getState().values, discountCode, hasDiscountCode: true },
+          handleFetchLineItems({
+            ...this.props,
+            isCodeValid: this.state.isCodeValid,
+          })({
+            values: {
+              ...this.formApi.getState().values,
+              discountCode,
+              hasDiscountCode: true
+            }
           });
         }
       }
@@ -92,59 +130,20 @@ export class BookingTimeFormComponent extends Component {
       () => {
         if (this.formApi) {
           this.formApi.change('discountCode', '');
-          this.handleOnChange({
+          handleFetchLineItems({
+            ...this.props,
+            isCodeValid: false,
+          })({
             values: {
               ...this.formApi.getState().values,
               discountCode: '',
-              hasDiscountCode: false,
-            },
+              hasDiscountCode: false
+            }
           });
         }
       }
     );
   };
-
-  handleOnChange(formValues) {
-    const { bookingStartTime, bookingEndTime } = formValues.values;
-    const startDate = bookingStartTime ? timestampToDate(bookingStartTime) : null;
-    const endDate = bookingEndTime ? timestampToDate(bookingEndTime) : null;
-
-    const listingId = this.props.listingId;
-    const isOwnListing = this.props.isOwnListing;
-
-    // Note: we expect values bookingStartTime and bookingEndTime to be strings
-    // which is the default case when the value has been selected through the form
-    const isStartBeforeEnd = bookingStartTime < bookingEndTime;
-
-    const discountCode = formValues.values.discountCode;
-    const hasDiscountCode = this.state.isCodeValid;
-
-    const hasSoundEngineerFee = formValues.values?.soundEngineerFee?.length > 0;
-    const hasMixingEngineerFee = formValues.values?.mixingEngineerFee?.length > 0;
-    const hasComposerFee = formValues.values?.composerFee?.length > 0;
-    const hasProducerFee = formValues.values?.producerFee?.length > 0;
-    if (
-      bookingStartTime &&
-      bookingEndTime &&
-      isStartBeforeEnd &&
-      !this.props.fetchLineItemsInProgress
-    ) {
-      this.props.onFetchTransactionLineItems({
-        orderData: {
-          bookingStart: startDate,
-          bookingEnd: endDate,
-          discountCode,
-          hasDiscountCode,
-          hasSoundEngineerFee,
-          hasMixingEngineerFee,
-          hasComposerFee,
-          hasProducerFee,
-        },
-        listingId,
-        isOwnListing,
-      });
-    }
-  }
 
   render() {
     const {
@@ -155,6 +154,7 @@ export class BookingTimeFormComponent extends Component {
       marketplaceName,
       ...rest
     } = this.props;
+
     const classes = classNames(rootClassName || css.root, className);
 
     return (
@@ -162,11 +162,11 @@ export class BookingTimeFormComponent extends Component {
         {...rest}
         unitPrice={unitPrice}
         onSubmit={this.handleFormSubmit}
-        render={fieldRenderProps => {
+        render={formRenderProps => {
           const {
             endDatePlaceholder,
             startDatePlaceholder,
-            formId,
+              formId,
             form,
             pristine,
             handleSubmit,
@@ -181,20 +181,20 @@ export class BookingTimeFormComponent extends Component {
             fetchLineItemsInProgress,
             fetchLineItemsError,
             payoutDetailsWarning,
-            soundEngineerFee,
-            mixingEngineerFee,
-            composerFee,
-            producerFee,
-          } = fieldRenderProps;
+              soundEngineerFee,
+              mixingEngineerFee,
+              composerFee,
+              producerFee,
+          } = formRenderProps;
 
           const startTime = values && values.bookingStartTime ? values.bookingStartTime : null;
           const endTime = values && values.bookingEndTime ? values.bookingEndTime : null;
           const startDate = startTime ? timestampToDate(startTime) : null;
           const endDate = endTime ? timestampToDate(endTime) : null;
-          const areDatesSelected = (startDate, endDate) => {
-            return startDate && endDate;
-          };
-          this.formApi = form;
+            const areDatesSelected = (startDate, endDate) => {
+              return startDate && endDate;
+            };
+            this.formApi = form;
           // This is the place to collect breakdown estimation data. See the
           // EstimatedCustomerBreakdownMaybe component to change the calculations
           // for customized payment processes.
@@ -209,82 +209,85 @@ export class BookingTimeFormComponent extends Component {
           const showEstimatedBreakdown =
             breakdownData && lineItems && !fetchLineItemsInProgress && !fetchLineItemsError;
 
-          const soundEngineerLabel = soundEngineerFee
-            ? intl.formatMessage(
-                { id: 'BookingDatesForm.soundEngineerLabel' },
-                {
-                  fee: formatMoney(
-                    intl,
-                    new Money(soundEngineerFee.amount, soundEngineerFee.currency)
-                  ),
-                }
-              )
-            : null;
+            const soundEngineerLabel = soundEngineerFee
+              ? intl.formatMessage(
+                  { id: 'BookingDatesForm.soundEngineerLabel' },
+                  {
+                    fee: formatMoney(
+                      intl,
+                      new Money(soundEngineerFee.amount, soundEngineerFee.currency)
+                    ),
+                  }
+                )
+              : null;
 
-          const soundEngineerMaybe = soundEngineerFee ? (
-            <FieldCheckbox
-              id={`${formId}.soundEngineerFee`}
-              name="soundEngineerFee"
-              label={soundEngineerLabel}
-              value="soundEngineerFee"
-            />
-          ) : null;
-          const mixingEngineerLabel = mixingEngineerFee
-            ? intl.formatMessage(
-                { id: 'BookingDatesForm.mixingEngineerLabel' },
-                {
-                  fee: formatMoney(
-                    intl,
-                    new Money(mixingEngineerFee.amount, mixingEngineerFee.currency)
-                  ),
-                }
-              )
-            : null;
+            const soundEngineerMaybe = soundEngineerFee ? (
+              <FieldCheckbox
+                id={`${formId}.soundEngineerFee`}
+                name="soundEngineerFee"
+                label={soundEngineerLabel}
+                value="soundEngineerFee"
+              />
+            ) : null;
+            const mixingEngineerLabel = mixingEngineerFee
+              ? intl.formatMessage(
+                  { id: 'BookingDatesForm.mixingEngineerLabel' },
+                  {
+                    fee: formatMoney(
+                      intl,
+                      new Money(mixingEngineerFee.amount, mixingEngineerFee.currency)
+                    ),
+                  }
+                )
+              : null;
 
-          const mixingEngineerMaybe = mixingEngineerFee ? (
-            <FieldCheckbox
-              id={`${formId}.mixingEngineerFee`}
-              name="mixingEngineerFee"
-              label={mixingEngineerLabel}
-              value="mixingEngineerFee"
-            />
-          ) : null;
-          const composerLabel = composerFee
-            ? intl.formatMessage(
-                { id: 'BookingDatesForm.composerLabel' },
-                { fee: formatMoney(intl, new Money(composerFee.amount, composerFee.currency)) }
-              )
-            : null;
+            const mixingEngineerMaybe = mixingEngineerFee ? (
+              <FieldCheckbox
+                id={`${formId}.mixingEngineerFee`}
+                name="mixingEngineerFee"
+                label={mixingEngineerLabel}
+                value="mixingEngineerFee"
+              />
+            ) : null;
+            const composerLabel = composerFee
+              ? intl.formatMessage(
+                  { id: 'BookingDatesForm.composerLabel' },
+                  { fee: formatMoney(intl, new Money(composerFee.amount, composerFee.currency)) }
+                )
+              : null;
 
-          const composerMaybe = composerFee ? (
-            <FieldCheckbox
-              id={`${formId}.composerFee`}
-              name="composerFee"
-              label={composerLabel}
-              value="composerFee"
-            />
-          ) : null;
-          const producerLabel = producerFee
-            ? intl.formatMessage(
-                { id: 'BookingDatesForm.producerLabel' },
-                { fee: formatMoney(intl, new Money(producerFee.amount, producerFee.currency)) }
-              )
-            : null;
+            const composerMaybe = composerFee ? (
+              <FieldCheckbox
+                id={`${formId}.composerFee`}
+                name="composerFee"
+                label={composerLabel}
+                value="composerFee"
+              />
+            ) : null;
+            const producerLabel = producerFee
+              ? intl.formatMessage(
+                  { id: 'BookingDatesForm.producerLabel' },
+                  { fee: formatMoney(intl, new Money(producerFee.amount, producerFee.currency)) }
+                )
+              : null;
 
-          const producerMaybe = producerFee ? (
-            <FieldCheckbox
-              id={`${formId}.producerFee`}
-              name="producerFee"
-              label={producerLabel}
-              value="producerFee"
-            />
-          ) : null;
+            const producerMaybe = producerFee ? (
+              <FieldCheckbox
+                id={`${formId}.producerFee`}
+                name="producerFee"
+                label={producerLabel}
+                value="producerFee"
+              />
+            ) : null;
           return (
             <Form onSubmit={handleSubmit} className={classes} enforcePagePreloadFor="CheckoutPage">
               <FormSpy
                 subscription={{ values: true }}
-                onChange={values => {
-                  this.handleOnChange(values);
+                onChange={formState => {
+                  handleFetchLineItems({
+                    ...this.props,
+                    isCodeValid: this.state.isCodeValid,
+                  })(formState);
                 }}
               />
               {monthlyTimeSlots && timeZone ? (
@@ -307,14 +310,18 @@ export class BookingTimeFormComponent extends Component {
                   pristine={pristine}
                   timeZone={timeZone}
                   dayCountAvailableForBooking={dayCountAvailableForBooking}
+                  handleFetchLineItems={handleFetchLineItems({
+                    ...this.props,
+                    isCodeValid: this.state.isCodeValid,
+                  })}
                 />
               ) : null}
-              <div className={css.feeContainer}>
-                <div className={css.feeDiv}>{soundEngineerMaybe}</div>
-                <div className={css.feeDiv}>{mixingEngineerMaybe}</div>
-                <div className={css.feeDiv}>{composerMaybe}</div>
-                <div className={css.feeDiv}>{producerMaybe}</div>
-              </div>
+                <div className={css.feeContainer}>
+                  <div className={css.feeDiv}>{soundEngineerMaybe}</div>
+                  <div className={css.feeDiv}>{mixingEngineerMaybe}</div>
+                  <div className={css.feeDiv}>{composerMaybe}</div>
+                  <div className={css.feeDiv}>{producerMaybe}</div>
+                </div>
 
               {showEstimatedBreakdown ? (
                 <div className={css.priceBreakdownContainer}>
@@ -331,55 +338,55 @@ export class BookingTimeFormComponent extends Component {
                     processName={BOOKING_PROCESS_NAME}
                   />
 
-                  {areDatesSelected(startDate, endDate) && (
-                    <>
-                      <label>
-                        {' '}
-                        <FormattedMessage id="BookingTimeForm.discountCodeLabel" />
-                      </label>
+                    {areDatesSelected(startDate, endDate) && (
+                      <>
+                        <label>
+                          {' '}
+                          <FormattedMessage id="BookingTimeForm.discountCodeLabel" />
+                        </label>
 
-                      <div className={css.discountCodeContainer}>
-                        <input
-                          type="text"
-                          value={this.state.discountCode}
-                          onChange={this.handleDiscountCodeChange}
-                          disabled={this.state.isCodeLocked}
-                          placeholder={intl.formatMessage({
-                            id: 'BookingTimeForm.discountCodePlaceholder',
-                          })}
-                        />
-                        {!this.state.isCodeLocked ? (
-                          <Button
-                            className={css.verifyButton}
-                            type="button"
-                            onClick={this.verifyDiscountCode}
-                          >
-                            <FormattedMessage id="BookingTimeForm.verifyCode" />
-                          </Button>
-                        ) : (
-                          <Button
-                            className={css.removeButton}
-                            type="button"
-                            onClick={this.removeDiscount}
-                          >
-                            <FormattedMessage id="BookingTimeForm.removeDiscount" />
-                          </Button>
-                        )}
-                      </div>
-                    </>
-                  )}
+                        <div className={css.discountCodeContainer}>
+                          <input
+                            type="text"
+                            value={this.state.discountCode}
+                            onChange={this.handleDiscountCodeChange}
+                            disabled={this.state.isCodeLocked}
+                            placeholder={intl.formatMessage({
+                              id: 'BookingTimeForm.discountCodePlaceholder',
+                            })}
+                          />
+                          {!this.state.isCodeLocked ? (
+                            <Button
+                              className={css.verifyButton}
+                              type="button"
+                              onClick={this.verifyDiscountCode}
+                            >
+                              <FormattedMessage id="BookingTimeForm.verifyCode" />
+                            </Button>
+                          ) : (
+                            <Button
+                              className={css.removeButton}
+                              type="button"
+                              onClick={this.removeDiscount}
+                            >
+                              <FormattedMessage id="BookingTimeForm.removeDiscount" />
+                            </Button>
+                          )}
+                        </div>
+                      </>
+                    )}
 
-                  {areDatesSelected(startDate, endDate) && this.state.validationMessage && (
-                    <p className={this.state.isCodeValid ? css.validCode : css.invalidCode}>
-                      {this.state.validationMessage}
-                    </p>
-                  )}
+                    {areDatesSelected(startDate, endDate) && this.state.validationMessage && (
+                      <p className={this.state.isCodeValid ? css.validCode : css.invalidCode}>
+                        {this.state.validationMessage}
+                      </p>
+                    )}
 
-                  <input
-                    type="hidden"
-                    name="discountCode"
-                    value={this.state.isCodeValid ? this.state.discountCode : ''}
-                  />
+                    <input
+                      type="hidden"
+                      name="discountCode"
+                      value={this.state.isCodeValid ? this.state.discountCode : ''}
+                    />
                 </div>
               ) : null}
 

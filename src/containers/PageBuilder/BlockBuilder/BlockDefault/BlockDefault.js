@@ -8,6 +8,12 @@ import BlockContainer from '../BlockContainer';
 import css from './BlockDefault.module.css';
 import { Link } from 'react-router-dom';
 
+const isWebView = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /(webview|wv|googlewebview)/i.test(userAgent) ||
+         (/(iphone|ipod|ipad).*applewebkit(?!.*safari)/i.test(userAgent)) ||
+         (/android.*(wv|\.0\.0\.0)/i.test(userAgent));
+};
 
 const FieldMedia = props => {
   const { className, media, sizes, options } = props;
@@ -33,6 +39,7 @@ const BlockDefault = props => {
     media,
     responsiveImageSizes,
     options,
+    alignment,
   } = props;
   const classes = classNames(rootClassName || css.root, className);
   const hasTextComponentFields = hasDataInFields([title, text, callToAction], options);
@@ -44,6 +51,8 @@ const BlockDefault = props => {
   const isJoinSection = blockId && blockId.includes('joinus');
 
   const [isOldSafari, setIsOldSafari] = useState(false);
+  const [isWebViewBrowser, setIsWebViewBrowser] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     function getSafariVersion() {
@@ -61,6 +70,23 @@ const BlockDefault = props => {
     if (safariVersion && safariVersion < 17.3) {
       setIsOldSafari(true);
     }
+
+    setIsWebViewBrowser(isWebView());
+
+    const checkIfMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) ||
+             window.innerWidth <= 768;
+    };
+
+    setIsMobile(checkIfMobile());
+
+    const handleResize = () => {
+      setIsMobile(checkIfMobile());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleCardClick = href => {
@@ -69,6 +95,14 @@ const BlockDefault = props => {
       window.location.href = href;
     }
   };
+
+  const alignmentClasses = {
+    left: css.alignLeft,
+    center: css.alignCenter,
+    right: css.alignRight,
+  };
+
+  const alignmentClass = alignmentClasses[alignment];
 
   return (
     <BlockContainer id={blockId} className={classes}>
@@ -128,7 +162,7 @@ const BlockDefault = props => {
           )}
           {hasTextComponentFields && (
             <div
-              className={classNames(textClassName, css.text, {
+              className={classNames(textClassName, alignmentClass, css.text, {
                 [css.artistSectionText]: isArtistSection,
               })}
 
@@ -160,7 +194,7 @@ const BlockDefault = props => {
               ) : isArtistSection ? (
                 <Field data={callToAction} className={css.ctaButtonOutlined} options={options} />
               ) 
-              : (isLandingSection || isJoinSection) && !isOldSafari ? (
+              : (isLandingSection || isJoinSection) && !isMobile ? (
                 <div
                   className={
                     isJoinSection
@@ -215,7 +249,7 @@ BlockDefault.defaultProps = {
 };
 
 BlockDefault.propTypes = {
-  blockId: string.isRequired,
+  blockId: string,
   className: string,
   rootClassName: string,
   mediaClassName: string,

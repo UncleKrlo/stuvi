@@ -1,6 +1,5 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import 'react-dates/initialize';
 
 import { types as sdkTypes } from '../../util/sdkLoader';
 import {
@@ -223,19 +222,12 @@ const getConfig = (listingTypes, listingFields, categoryConfig) => {
 };
 
 describe('EditListingPage', () => {
-  const originalWarn = console.warn.bind(console.warn);
   beforeEach(() => {
     // This is not defined by default on test env. Availability panel needs it.
     window.scrollTo = jest.fn();
-    console.warn = msg =>
-      !(
-        msg.toString().includes('componentWillReceiveProps') ||
-        msg.toString().includes('componentWillUpdate')
-      ) && originalWarn(msg);
   });
 
   afterAll(() => {
-    console.warn = originalWarn;
     // Remove window.scrollTo
     jest.clearAllMocks();
   });
@@ -246,10 +238,10 @@ describe('EditListingPage', () => {
     return num >= 0 && num < 10 ? `0${num}` : `${num}`;
   };
 
-  const initialState = listing => ({
+  const initialState = (listing, currentUser) => ({
     EditListingPage: {
       createListingDraftError: null,
-      listingId: listing.id,
+      listingId: listing?.id || null,
       submittedListingId: null,
       redirectToListing: false,
       uploadedImages: {},
@@ -280,10 +272,17 @@ describe('EditListingPage', () => {
     },
     marketplaceData: {
       entities: {
-        ownListing: {
-          [listing.id.uuid]: listing,
-        },
+        ownListing: listing
+          ? {
+              [listing.id.uuid]: listing,
+            }
+          : {},
       },
+    },
+    user: {
+      currentUser: currentUser || createCurrentUser('id-of-me-myself'),
+      currentUserHasListings: false,
+      sendVerificationEmailInProgress: false,
     },
   });
 
@@ -313,6 +312,7 @@ describe('EditListingPage', () => {
     const { getByText, queryAllByText, getByRole, getByLabelText, queryAllByRole } = render(
       <EditListingPage {...props} />,
       {
+        initialState: initialState(),
         config,
         routeConfiguration,
       }
@@ -389,6 +389,7 @@ describe('EditListingPage', () => {
     const { getByText, getByRole, getByLabelText, queryAllByRole } = render(
       <EditListingPage {...props} />,
       {
+        initialState: initialState(),
         config,
         routeConfiguration,
       }
@@ -514,6 +515,7 @@ describe('EditListingPage', () => {
     const { getByText, getByRole, getByLabelText, queryAllByRole } = render(
       <EditListingPage {...props} />,
       {
+        initialState: initialState(),
         config,
         routeConfiguration,
       }
@@ -1871,7 +1873,7 @@ describe('EditListingPage', () => {
       getByText('EditListingAvailabilityExceptionForm.exceptionEndDateLabel')
     ).toBeInTheDocument();
 
-    // TODO Testing react-dates / date pickers needs more work
+    // TODO Testing date pickers needs more work
 
     // submit button
     expect(
@@ -2342,12 +2344,12 @@ describe('EditListingPageComponent', () => {
     render(
       <EditListingPageComponent
         params={{ id: 'id', slug: 'slug', type: 'new', tab: 'details' }}
-        currentUserHasListings={false}
         isAuthenticated={false}
         authInProgress={false}
         fetchInProgress={false}
         location={{ search: '' }}
         history={{ push: noop, replace: noop }}
+        currentUser={createCurrentUser('id-of-me-myself', { state: 'active' })}
         getAccountLinkInProgress={false}
         getOwnListing={noop}
         images={[]}
