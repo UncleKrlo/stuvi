@@ -1,0 +1,306 @@
+.card {
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  border: 5px solid transparent;
+  background-image: linear-gradient(white, white), 
+                    linear-gradient(135deg, #ffd700 0%, #b8860b 60%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  overflow: hidden;
+  transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 215, 0, 0.1) 45%,
+    rgba(255, 215, 0, 0.3) 50%,
+    rgba(255, 215, 0, 0.1) 55%,
+    transparent 100%
+  );
+  transform: rotate(0deg);
+  animation: shine 4s infinite;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.cardHeader {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+  background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+  color: #442c00;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardTitle {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.cardDescription {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  opacity: 0.9;
+}
+
+.pricing {
+  margin-top: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.price {
+  font-size: 2.25rem;
+  font-weight: bold;
+  background: #442c00;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.period {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-bottom: 0;
+}
+
+.benefitsSection,
+.perksSection {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .benefitsSection,
+  .perksSection {
+    margin-bottom: 0rem;
+  }
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.benefitsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.checkIcon {
+  color: #22c55e;
+  margin-right: 0.8rem;
+  font-weight: bold;
+}
+
+.icon {
+  margin-right: 0.8rem;
+}
+
+.cardFooter {
+  padding: 1.25rem;
+  padding-top: 0;
+  text-align: center;
+}
+
+.subscribeButton {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #442c00;
+  background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.subscribeButton:hover {
+  /* background: linear-gradient(135deg, #b8860b 0%, #ffd700 100%); */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+.card:hover {
+  box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+}
+
+.underlinedText {
+  border-bottom: 2px dotted #4a4a4F;
+  cursor: help;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 1px;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(184, 134, 11, 0.95);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  white-space: normal;
+  min-width: 170px;
+  text-align: left;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+  line-height: 1.4;
+}
+
+.tooltip2 {
+    visibility: hidden;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(184, 134, 11, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    white-space: normal;
+    min-width: 270px;
+    text-align: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s;
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    line-height: 1.4;
+}
+
+.underlinedText:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.underlinedText:hover .tooltip2 {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip::after {
+  border-color: rgba(184, 134, 11, 0.95) transparent transparent transparent;
+} 
+
+.tooltip2::after {
+    border-color: rgba(184, 134, 11, 0.95) transparent transparent transparent;
+} 
+
+/* Tablet (768px y menos) */
+@media (max-width: 768px) {
+  .card {
+    max-width: 320px;
+    border-width: 4px;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+
+  .cardContent {
+    padding: 1.25rem;
+  }
+
+  .tooltip, .tooltip2 {
+    font-size: 0.85rem;
+    min-width: 200px;
+  }
+}
+
+/* Mobile (480px y menos) */
+@media (max-width: 480px) {
+  .card {
+    max-width: 300px;
+    border-width: 3px;
+    margin: 0.5rem;
+  }
+
+  .cardHeader {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .price {
+    font-size: 1.75rem;
+  }
+
+  .period {
+    font-size: 1rem;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .benefitItem {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .tooltip, .tooltip2 {
+    min-width: 180px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    /* Ajustamos la posición para móviles */
+    bottom: 120%;
+  }
+
+  .subscribeButton {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile pequeño (360px y menos) */
+@media (max-width: 360px) {
+  .card {
+    max-width: 280px;
+  }
+
+  .tooltip, .tooltip2 {
+    min-width: 160px;
+  }
+}

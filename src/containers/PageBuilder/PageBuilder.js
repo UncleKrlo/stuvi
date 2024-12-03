@@ -11,6 +11,7 @@ import SectionBuilder from './SectionBuilder/SectionBuilder.js';
 import StaticPage from './StaticPage.js';
 import Accordion from '../../components/Accordion/Accordion.js';
 import MagazineDisplay, { DEFAULT_CACHE_KEY, DEFAULT_PDF_URL } from '../../components/MagazineDisplay/MagazineDisplay.js';
+import SubscriptionCard from '../../components/SubscriptionCard/SubscriptionCard';
 
 import css from './PageBuilder.module.css';
 import IconSearchDesktop from '../../containers/TopbarContainer/Topbar/TopbarSearchForm/IconSearchDesktop.js';
@@ -389,6 +390,68 @@ const MusicStudioFinderBuilder = ({ sections, options }) => {
   return <>{musicStudioFinderSections}</>;
 };
 
+const SubscriptionBuilder = ({ sections, options }) => {
+  const subscriptionSections = sections.map((section, index) => {
+    const containerStyle = {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem 1rem',
+      minHeight: '80vh',
+      background: 'linear-gradient(135deg, #1345CA 0%, #0B0D17 100%)',
+      backgroundImage: `
+        linear-gradient(135deg, #1345CA 0%, #0B0D17 100%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 100%)
+      `,
+      backgroundBlendMode: 'overlay',
+    };
+
+    const titleStyle = {
+      fontSize: '3rem',
+      color: '#FFFFFF',
+      fontWeight: 'bold',
+      marginBottom: '0.8rem',
+      textAlign: 'center',
+      textShadow: '0 2px 15px rgba(255,255,255,0.2)',
+      letterSpacing: '0.5px',
+      '@media (max-width: 768px)': {
+        fontSize: '2.5rem',
+        marginBottom: '1.2rem',
+      },
+      '@media (max-width: 480px)': {
+        fontSize: '2rem',
+        marginBottom: '1.2rem',
+        padding: '0.1rem',
+      },
+    };
+
+    const descriptionStyle = {
+      fontSize: '1.2rem',
+      color: '#FFFFFF',
+      marginTop: '0rem',
+      '@media (max-width: 768px)': {
+        marginTop: '1.5rem',
+      },
+      '@media (max-width: 480px)': {
+        marginTop: '1.5rem',
+      },
+      marginBottom: '1rem',
+      textAlign: 'center',
+    };
+
+    return (
+      <div key={index} style={containerStyle}>
+        <h1 style={titleStyle}>Stuvi Creator +</h1>
+        <p style={descriptionStyle}>For artists who want to take the next step.</p>
+        <SubscriptionCard />
+      </div>
+    );
+  });
+
+  return <>{subscriptionSections}</>;
+};
+
 const PageBuilder = props => {
   const {
     pageAssetsData,
@@ -429,6 +492,11 @@ const PageBuilder = props => {
     section.sectionName && section.sectionName.includes('Magazines.')
   );
 
+    const isSubscriptionPage = pageAssetsData?.sections?.some(section => {
+    console.log('Checking section name:', section.sectionName);
+    return section.sectionName && section.sectionName.includes('Stuvi Creator');
+  });
+
   useEffect(() => {
     if (isMagazinesPage) {
       // Usar las constantes desde MagazineDisplay
@@ -464,6 +532,8 @@ const PageBuilder = props => {
               <Main as="main" className={css.main}>
                 {sections.length === 0 && inProgress ? (
                   <LoadingSpinner />
+                ) : isSubscriptionPage ? (
+                  <SubscriptionBuilder sections={sections} options={options} />
                 ) : isFaqPage ? (
                   <FaqSectionBuilder sections={sections} options={options} />
                 ) : isMusicStudioFinderPage ? (
